@@ -17,14 +17,15 @@
 # SOFTWARE.
 
 CC     = gcc
-CFLAGS = -std=c++17 -Wall -Wextra -pedantic -g # -O3
+CFLAGS = -std=c++17 # -Wall -Wextra -pedantic -g -O3
 TARGET = baseball_cards
 OUT	   = program1
 
 all: $(TARGET)
 
 $(TARGET) : $(TARGET).o
-	$(CC) $(CFLAGS) -o $(OUT) $(TARGET).cc -lstdc++
+	$(CC) $(CFLAGS) -o $(OUT) $(TARGET).o -lstdc++
+	$(RM) *.o
 
-$(TARGET).o : $(TARGET).cc
+$(TARGET).o : $(TARGET).cc $(TARGET).h
 	$(CC) $(CFLAGS) -c $(TARGET).cc -lstdc++
