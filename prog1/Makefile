@@ -19,11 +19,13 @@
 CC     = g++
 CFLAGS = -std=c++17 # -Wall -Wextra -pedantic -g -O3
 TARGET = baseball_cards
+OUT    = program1
 
 .PHONY: default
+default : $(TARGET)
 
 $(TARGET): $(TARGET).o
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).o
+	$(CC) $(CFLAGS) -o $(OUT) $(TARGET).o
 
 $(TARGET).o: $(TARGET).cc $(TARGET).h
 	$(CC) $(CFLAGS) -c $(TARGET).cc
