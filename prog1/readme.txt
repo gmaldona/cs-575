@@ -11,3 +11,8 @@ additional offense.
 
 Gregory Maldonado
 School of Computing, Binghamton University.
+
+SELF NOTE:
+The text files that were given were created in windows as evident of the '\r\n'
+new lines. To convert use:
+        `tr -d '\015' <$(basename filename).txt > $(basename filename).linux.txt`
