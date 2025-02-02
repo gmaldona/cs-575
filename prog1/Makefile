@@ -16,16 +16,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-CC     = gcc
+CC     = g++
 CFLAGS = -std=c++17 # -Wall -Wextra -pedantic -g -O3
 TARGET = baseball_cards
-OUT	   = program1
 
-all: $(TARGET)
+.PHONY: default
 
-$(TARGET) : $(TARGET).o
-	$(CC) $(CFLAGS) -o $(OUT) $(TARGET).o -lstdc++
-	$(RM) *.o
+$(TARGET): $(TARGET).o
+	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).o
 
-$(TARGET).o : $(TARGET).cc $(TARGET).h
-	$(CC) $(CFLAGS) -c $(TARGET).cc -lstdc++
+$(TARGET).o: $(TARGET).cc $(TARGET).h
+	$(CC) $(CFLAGS) -c $(TARGET).cc
