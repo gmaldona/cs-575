@@ -6,7 +6,6 @@
 # email : gmaldonado@cs.binghamton.edu
 # date  : 2025-01-30
 # web   : https://cs.binghamton.edu/~gmaldonado/
-# file name:   baseball_cards.cc
 #
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
