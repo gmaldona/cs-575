@@ -26,6 +26,7 @@ default : $(TARGET)
 
 $(TARGET): $(TARGET).o
 	$(CC) $(CFLAGS) -o $(OUT) $(TARGET).o
+	$(RM) *.o
 
 $(TARGET).o: $(TARGET).cc $(TARGET).h
 	$(CC) $(CFLAGS) -c $(TARGET).cc

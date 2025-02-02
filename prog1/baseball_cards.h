@@ -5,20 +5,63 @@
 
 #include <string>
 #include <memory>
+#include <utility>
 #include <unordered_map>
 
-typedef std::unordered_map<std::string, uint64_t> __market_price_t;
-typedef std::shared_ptr<__market_price_t>           market_price_t;
 
-typedef std::unordered_map<std::string, uint64_t> __price_list_t;
-typedef std::shared_ptr<__price_list_t>             price_list_t;
+struct price_list_s {
+   uint64_t cards;
+   uint64_t max_cost;
 
-std::ostream operator<<(std::ostream os, __market_price_t market_price);
+   bool operator==(const price_list_s& other) const;
+};
 
-std::ostream operator<<(std::ostream os, __price_list_t price_list);
+/**
+ * Hashing functor for price_list_s
+ * A hashing functor is required to set a price_list_s as a key to an
+ * unordered map<price_list_s, card_set_ptr_t>.
+ *
+ * source for creating a hasing functor:
+ * https://stackoverflow.com/questions/17016175
+ */
+template <>
+struct std::hash<price_list_s> {
+   std::size_t operator()(const price_list_s& price_list) const {
+      std::hash<int> hash_cards;
+      std::hash<int> hash_max_cost;
+
+      return hash_cards(price_list.cards)
+         ^ (hash_max_cost(price_list.max_cost) << 1);
+   }
+};
+
+typedef uint64_t cost_t;
+
+typedef std::unordered_map<std::string, cost_t>            card_set_t;
+typedef std::shared_ptr<card_set_t>                        card_set_ptr_t;
+
+typedef card_set_t                                       __market_price_t;
+typedef card_set_ptr_t                                     market_price_t;
+
+typedef std::unordered_map<price_list_s, card_set_ptr_t> __price_lists_t;
+typedef std::shared_ptr<__price_lists_t>                   price_lists_t;
+
+typedef std::pair<price_list_s, card_set_ptr_t>            price_list_t;
+
+std::ostream& operator<<(std::ostream& os, const market_price_t& market_price);
+
+std::ostream& operator<<(std::ostream& os, const price_lists_t& price_list);
+
+std::ostream& operator<<(std::ostream& os, const card_set_t& card_set);
 
 void read_market_price(const std::string& filename,
                        const market_price_t&  market_price);
+
+void read_price_lists(const std::string& filename,
+                     const price_lists_t& price_lists);
+
+cost_t compute_profit(const market_price_t& market_price,
+                      const card_set_t& set);
 
 /**
  *
@@ -68,7 +111,8 @@ void compute_max_profit(const std::string& market_price,
  * @param price_list
  */
 
-void compute_max_profit(const market_price_t& market_price,
-                        const price_list_t&   price_list);
+std::pair<cost_t, card_set_t>
+compute_max_profit(const market_price_t& market_price,
+                   const price_list_t&   price_list);
 
 #endif //PROG1__BASEBALL_CARDS_H_
