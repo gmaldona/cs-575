@@ -27,6 +27,7 @@
 #include "baseball_cards.h"
 
 using namespace std;
+using namespace std::chrono;
 
 //===== GM =========================================================== 80 ====>>
 
@@ -84,6 +85,21 @@ vector<__card_set_t> compute_subsets(const card_set_t& set) {
    }
    return subsets;
 }
+
+void write_output(const std::string& filename,
+                  const result_s&    result) {
+   string output = to_string(result.input_size).append(" ")
+                     .append(to_string(result.profit)).append(" ")
+                     .append(to_string(result.duration))
+                     .append("\n");
+
+   for (auto& card : result.card_set) {
+      output.append(card.name).append("\n");
+   }
+
+   cout << output << std::endl;
+}
+
 
 void read_market_price(const string& filename,
                        const market_price_t& market_price) {
@@ -171,19 +187,29 @@ cost_t compute_profit(const market_price_t& market_price,
    return profit;
 }
 
-pair<cost_t, __card_set_t>
+result_s
 compute_max_profit(const market_price_t& market_price,
                      const price_list_t&   price_list) {
-   uint64_t cards     = price_list.first.cards;
    cost_t max_cost    = price_list.first.max_cost;
    card_set_t set     = price_list.second;
 
    __card_set_t maximized_set;
    cost_t max_profit = 0;
 
+   auto start = high_resolution_clock::now();
    if (compute_set_cost(*set) <= max_cost) {
       try {
-         return make_pair(compute_profit(market_price, *set), *set);
+         result_s result = {
+            .input_size = set->size(),
+            .profit     = compute_profit(market_price, *set),
+            .card_set   = *set
+         };
+
+         auto end = high_resolution_clock::now();
+         result.duration = duration_cast<duration_t>(end - start).count();
+
+         return result;
+
       } catch (const std::exception& e) {
          throw;
       }
@@ -203,7 +229,15 @@ compute_max_profit(const market_price_t& market_price,
       }
    }
 
-   return make_pair(max_profit, maximized_set);
+   auto end = high_resolution_clock::now();
+   result_s result = {
+      .input_size = set->size(),
+      .profit     = max_profit,
+      .card_set   = maximized_set,
+      .duration   =  duration_cast<duration_t>(end - start).count()
+   };
+
+   return result;
 }
 
 void compute_max_profit(const string& market_price_filename,
@@ -222,14 +256,14 @@ void compute_max_profit(const string& market_price_filename,
    for (
       auto& [list_entry, card_set] : *price_list
    ) {
-      auto maximized
+      auto result
          = compute_max_profit(market_price, make_pair(list_entry, card_set));
 
-      if (maximized.first > 0 && ! maximized.second.empty()) {
-         cout << "Solution #"   << problem << ":" << std::endl
-              << "\t max profit = " << "$"     << maximized.first << std::endl
-              << "\t\t\tset = { " << maximized.second << "}" << std::endl;
+      if (problem == 1) {
+         cout << endl << "============ OUTPUT ============" << endl << endl;
       }
+      write_output(output_filename, result);
+
       problem++;
    }
 }

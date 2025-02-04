@@ -23,15 +23,18 @@
 #define PROG1__BASEBALL_CARDS_H_
 
 #include <iostream>
+#include <chrono>
 #include <string>
 #include <memory>
 #include <vector>
+#include <tuple>
 #include <utility>
 #include <unordered_map>
 
 //===== GM =========================================================== 80 ====>>
 
 typedef uint64_t cost_t;
+typedef std::chrono::duration<double_t> duration_t;
 
 struct card_s {
    std::string name;
@@ -78,16 +81,31 @@ typedef std::shared_ptr<__price_lists_t>                   price_lists_t;
 
 typedef std::pair<price_list_s, card_set_t>                price_list_t;
 
+/**
+ * A "Result" struct to store computation results in.
+ * The data recorded within this struct ultimately is what ends up in the output
+ * file.
+ */
+struct result_s {
+   size_t       input_size;
+   cost_t       profit;
+   __card_set_t card_set;
+   double_t     duration;
+};
+
 std::ostream& operator<<(std::ostream& os, const market_price_t& market_price);
 
 std::ostream& operator<<(std::ostream& os, const price_lists_t& price_list);
 
 std::ostream& operator<<(std::ostream& os, const card_set_t& card_set);
 
-void read_market_price(const std::string& filename,
+void write_output(const std::string& filename,
+                  const result_s&    result);
+
+void read_market_price(const std::string&     filename,
                        const market_price_t&  market_price);
 
-void read_price_lists(const std::string& filename,
+void read_price_lists(const std::string&  filename,
                      const price_lists_t& price_lists);
 
 /**
@@ -163,7 +181,7 @@ void compute_max_profit(const std::string& market_price,
  * @param price_list
  */
 
-std::pair<cost_t, __card_set_t>
+result_s
 compute_max_profit(const market_price_t& market_price,
                    const price_list_t&   price_list);
 
