@@ -101,7 +101,7 @@ void write_output(const std::string& filename,
       output_file << output_text;
       output_file.close();
    } else {
-      std::cerr << "[ERROR] could not write to " << output_file << std::endl;
+      std::cerr << "[ERROR] could not write to " << filename << std::endl;
    }
 
    cout << output_text << std::endl;
@@ -299,12 +299,20 @@ int main(int argc, char *argv[]) {
       }
    }
 
+   if (market_price.empty() || price_list.empty() || output.empty()) {
+      std::cerr << "[ERROR] failed to provide one or more correct arguments."
+                << std::endl;
+      return EXIT_FAILURE;
+   }
+
    ofstream output_file(output, std::ofstream::out | std::ofstream::trunc);
    if (output_file.is_open()) {
       output_file.close();
    }
 
    compute_max_profit(market_price, price_list, output);
+
+   std::cout << "[INFO] Writing results to: " << output << std::endl;
 
    return EXIT_SUCCESS;
 }
