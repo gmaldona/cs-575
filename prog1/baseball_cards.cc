@@ -38,8 +38,8 @@ bool price_list_s::operator==(const price_list_s& other) const {
    return this->cards == other.cards && this->max_cost == other.max_cost;
 }
 
-ostream& operator<<(ostream& os, const card_set_t& card_set) {
-   for (auto& card : *card_set) {
+ostream& operator<<(ostream& os, const __card_set_t& card_set) {
+   for (auto& card : card_set) {
       os << card.name << ":" << card.cost << "; ";
    }
    return os;
@@ -64,6 +64,25 @@ ostream & operator<<(ostream& os, const price_lists_t& price_list) {
       current_entry++;
    }
    return os;
+}
+
+vector<__card_set_t> compute_subsets(const card_set_t& set) {
+   vector<__card_set_t> subsets;
+   // empty set that is not going to use but is required
+   //    for the other sets to be iteratively built
+   subsets.push_back(std::vector<card_s>());
+
+   for (int i = 0; i < set->size(); ++i) {
+      vector<__card_set_t> temp(subsets);
+
+      for (int j = 0; j < temp.size(); ++j) {
+         temp[j].push_back((*set)[i]);
+      }
+      for (int j = 0; j < temp.size(); ++j) {
+         subsets.push_back(temp[j]);
+      }
+   }
+   return subsets;
 }
 
 void read_market_price(const string& filename,
@@ -128,10 +147,18 @@ void read_price_lists(const std::string& filename,
    }
 }
 
+inline cost_t compute_set_cost(const __card_set_t& set) {
+   cost_t total_cost = 0;
+   for (auto& card : set) {
+      total_cost += card.cost;
+   }
+   return total_cost;
+}
+
 cost_t compute_profit(const market_price_t& market_price,
-                      const card_set_t& set) {
+                      const __card_set_t& set) {
    cost_t profit = 0;
-   for (auto& card : *set) {
+   for (auto& card : set) {
       __market_price_t::const_iterator itr = market_price->find(card.name);
       if (itr == market_price->end()) {
          std::cerr << "[ERROR] card: " << card.name
@@ -144,26 +171,35 @@ cost_t compute_profit(const market_price_t& market_price,
    return profit;
 }
 
-pair<cost_t, card_set_t>
+pair<cost_t, __card_set_t>
 compute_max_profit(const market_price_t& market_price,
-                   const price_list_t&   price_list) {
+                     const price_list_t&   price_list) {
    uint64_t cards     = price_list.first.cards;
    cost_t max_cost    = price_list.first.max_cost;
    card_set_t set     = price_list.second;
 
-   card_set_t maximized_set;
-   cost_t     max_profit     = 0;
+   __card_set_t maximized_set;
+   cost_t max_profit = 0;
 
-   uint64_t total_cost = 0;
-   for (auto& [name, cost] : *set) {
-      total_cost += cost;
-   }
-
-   if (total_cost <= max_cost) {
+   if (compute_set_cost(*set) <= max_cost) {
       try {
-         return make_pair(compute_profit(market_price, set), set);
+         return make_pair(compute_profit(market_price, *set), *set);
       } catch (const std::exception& e) {
          throw;
+      }
+   }
+
+   for (auto& subset : compute_subsets(set)) {
+      if (! subset.empty()) {
+         try {
+             cost_t profit = compute_profit(market_price, subset);
+             if (compute_set_cost(subset) <= max_cost && profit > max_profit) {
+                max_profit    = profit;
+                maximized_set = subset;
+             }
+         } catch (const std::exception& e) {
+            throw;
+         }
       }
    }
 
@@ -187,10 +223,10 @@ void compute_max_profit(const string& market_price_filename,
       auto& [list_entry, card_set] : *price_list
    ) {
       auto maximized
-         = compute_max_profit(market_price,make_pair(list_entry, card_set));
+         = compute_max_profit(market_price, make_pair(list_entry, card_set));
 
-      if (maximized.first > 0 && maximized.second) {
-         cout << "problem #"   << problem << ":" << std::endl
+      if (maximized.first > 0 && ! maximized.second.empty()) {
+         cout << "Solution #"   << problem << ":" << std::endl
               << "\t max profit = " << "$"     << maximized.first << std::endl
               << "\t\t\tset = { " << maximized.second << "}" << std::endl;
       }
