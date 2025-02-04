@@ -17,25 +17,30 @@
 * SOFTWARE.
 */
 
-#include <iostream>
-#include <getopt.h>
 #include <fstream>
-#include <unistd.h>
-#include <unordered_map>
 #include <stdexcept>
+
+#include <getopt.h>
+#include <unistd.h>
+#include <string>
+
 #include "baseball_cards.h"
 
 using namespace std;
 
 //===== GM =========================================================== 80 ====>>
 
+bool card_s::operator==(const card_s &other) const {
+   return this->name == other.name && this->cost == other.cost;
+}
+
 bool price_list_s::operator==(const price_list_s& other) const {
    return this->cards == other.cards && this->max_cost == other.max_cost;
 }
 
 ostream& operator<<(ostream& os, const card_set_t& card_set) {
-   for (auto& [name, cost] : card_set) {
-      os << name << ":" << cost << "; ";
+   for (auto& card : *card_set) {
+      os << card.name << ":" << card.cost << "; ";
    }
    return os;
 }
@@ -96,16 +101,16 @@ void read_price_lists(const std::string& filename,
    price_lists_file.open(filename);
    if(price_lists_file.is_open()) {
 
-      while(price_lists_file) {
+      while(price_lists_file.peek() != EOF) {
          getline(price_lists_file, line);
 
          if (line.empty()) { break; }
 
-         uint64_t cards    = stoi(line.substr(0, line.find(' ')));
+         uint64_t cards    = stoi(line.substr(0, line.find(' ')));;
          uint64_t max_cost = stoi(line.substr(line.find(' ') + 1));
 
          price_list_s list_entry = { .cards = cards, .max_cost = max_cost };
-         card_set_ptr_t card_set = std::make_shared<card_set_t>();
+         card_set_t card_set = std::make_shared<__card_set_t>();
 
          price_lists->insert(make_pair(list_entry, card_set));
 
@@ -113,8 +118,9 @@ void read_price_lists(const std::string& filename,
             getline(price_lists_file, line);
 
             string name    = line.substr(0, line.find(' '));
-            uint64_t price = stoi(line.substr(line.find(' ') + 1));
-            (*(*price_lists)[list_entry])[name] = price;
+            uint64_t cost  = stoi(line.substr(line.find(' ') + 1));
+            card_s card = { .name = name, .cost = cost };
+            (*price_lists)[list_entry]->push_back(card);
          }
       }
    } else {
@@ -125,14 +131,14 @@ void read_price_lists(const std::string& filename,
 cost_t compute_profit(const market_price_t& market_price,
                       const card_set_t& set) {
    cost_t profit = 0;
-   for (auto& [name, cost] : set) {
-      card_set_t::const_iterator itr = market_price->find(name);
+   for (auto& card : *set) {
+      __market_price_t::const_iterator itr = market_price->find(card.name);
       if (itr == market_price->end()) {
-         std::cerr << "[ERROR] card: " << name
+         std::cerr << "[ERROR] card: " << card.name
                    << "was not found in market_price list." << std::endl;
          throw std::exception();
       } else {
-         profit += ((*market_price)[name] - cost);
+         profit += ((*market_price)[card.name] - card.cost);
       }
    }
    return profit;
@@ -143,10 +149,10 @@ compute_max_profit(const market_price_t& market_price,
                    const price_list_t&   price_list) {
    uint64_t cards     = price_list.first.cards;
    cost_t max_cost    = price_list.first.max_cost;
-   card_set_ptr_t set = price_list.second;
+   card_set_t set     = price_list.second;
 
    card_set_t maximized_set;
-   cost_t     max_profit;
+   cost_t     max_profit     = 0;
 
    uint64_t total_cost = 0;
    for (auto& [name, cost] : *set) {
@@ -155,7 +161,7 @@ compute_max_profit(const market_price_t& market_price,
 
    if (total_cost <= max_cost) {
       try {
-         return make_pair(compute_profit(market_price, *set), *set);
+         return make_pair(compute_profit(market_price, set), set);
       } catch (const std::exception& e) {
          throw;
       }
@@ -168,7 +174,7 @@ void compute_max_profit(const string& market_price_filename,
                         const string& price_list_filename,
                         const string& output_filename) {
    market_price_t market_price = std::make_shared<__market_price_t>();
-   price_lists_t   price_list   = std::make_shared<__price_lists_t>();
+   price_lists_t   price_list  = std::make_shared<__price_lists_t>();
 
    read_market_price(market_price_filename, market_price);
    read_price_lists(price_list_filename, price_list);
@@ -183,9 +189,11 @@ void compute_max_profit(const string& market_price_filename,
       auto maximized
          = compute_max_profit(market_price,make_pair(list_entry, card_set));
 
-      cout << "problem #"   << problem << ":" << std::endl
-           << "\tmax profit=" << "$"     << maximized.first << " "
-           << "set={ " << maximized.second << " }" << std::endl;
+      if (maximized.first > 0 && maximized.second) {
+         cout << "problem #"   << problem << ":" << std::endl
+              << "\t max profit = " << "$"     << maximized.first << std::endl
+              << "\t\t\tset = { " << maximized.second << "}" << std::endl;
+      }
       problem++;
    }
 }

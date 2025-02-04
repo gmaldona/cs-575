@@ -22,12 +22,23 @@
 #ifndef PROG1__BASEBALL_CARDS_H_
 #define PROG1__BASEBALL_CARDS_H_
 
+#include <iostream>
 #include <string>
 #include <memory>
+#include <vector>
 #include <utility>
 #include <unordered_map>
 
 //===== GM =========================================================== 80 ====>>
+
+typedef uint64_t cost_t;
+
+struct card_s {
+   std::string name;
+   cost_t      cost;
+
+   bool operator==(const card_s& other) const;
+};
 
 struct price_list_s {
    uint64_t cards;
@@ -38,35 +49,34 @@ struct price_list_s {
 
 /**
  * Hashing functor for price_list_s
- * A hashing functor is required to set a price_list_s as a key to an
- * unordered map<price_list_s, card_set_ptr_t>.
  *
- * source for creating a hasing functor:
+ * A hashing functor is required to set a price_list_s as a key to an unordered
+ * map<price_list_s, card_set_ptr_t>.
+ *
+ * source for creating a hashing functor:
  * https://stackoverflow.com/questions/17016175
  */
 template <>
 struct std::hash<price_list_s> {
    std::size_t operator()(const price_list_s& price_list) const {
-      std::hash<int> hash_cards;
-      std::hash<int> hash_max_cost;
+      std::hash<size_t> hash_cards;
+      std::hash<size_t> hash_max_cost;
 
       return hash_cards(price_list.cards)
          ^ (hash_max_cost(price_list.max_cost) << 1);
    }
 };
 
-typedef uint64_t cost_t;
+typedef std::vector<card_s>                               __card_set_t;
+typedef std::shared_ptr<__card_set_t>                       card_set_t;
 
-typedef std::unordered_map<std::string, cost_t>            card_set_t;
-typedef std::shared_ptr<card_set_t>                        card_set_ptr_t;
+typedef std::unordered_map<std::string, cost_t>          __market_price_t;
+typedef std::shared_ptr<__market_price_t>                  market_price_t;
 
-typedef card_set_t                                       __market_price_t;
-typedef card_set_ptr_t                                     market_price_t;
-
-typedef std::unordered_map<price_list_s, card_set_ptr_t> __price_lists_t;
+typedef std::unordered_map<price_list_s, card_set_t>     __price_lists_t;
 typedef std::shared_ptr<__price_lists_t>                   price_lists_t;
 
-typedef std::pair<price_list_s, card_set_ptr_t>            price_list_t;
+typedef std::pair<price_list_s, card_set_t>                price_list_t;
 
 std::ostream& operator<<(std::ostream& os, const market_price_t& market_price);
 
