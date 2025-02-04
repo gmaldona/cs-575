@@ -21,8 +21,6 @@
 #include <stdexcept>
 
 #include <getopt.h>
-#include <unistd.h>
-#include <string>
 
 #include "baseball_cards.h"
 
