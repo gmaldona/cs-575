@@ -88,16 +88,25 @@ vector<__card_set_t> compute_subsets(const card_set_t& set) {
 
 void write_output(const std::string& filename,
                   const result_s&    result) {
-   string output = to_string(result.input_size).append(" ")
+   string output_text = to_string(result.input_size).append(" ")
                      .append(to_string(result.profit)).append(" ")
+                     .append(to_string(result.card_set.size())).append(" ")
                      .append(to_string(result.duration))
                      .append("\n");
 
    for (auto& card : result.card_set) {
-      output.append(card.name).append("\n");
+      output_text.append(card.name).append("\n");
    }
 
-   cout << output << std::endl;
+   ofstream output_file(filename, std::ios_base::app);
+   if (output_file.is_open()) {
+      output_file << output_text;
+      output_file.close();
+   } else {
+      std::cerr << "[ERROR] could not write to " << output_file << std::endl;
+   }
+
+   cout << output_text << std::endl;
 }
 
 
@@ -229,13 +238,14 @@ compute_max_profit(const market_price_t& market_price,
       }
    }
 
-   auto end = high_resolution_clock::now();
    result_s result = {
       .input_size = set->size(),
       .profit     = max_profit,
       .card_set   = maximized_set,
-      .duration   =  duration_cast<duration_t>(end - start).count()
    };
+
+   auto end = high_resolution_clock::now();
+   result.duration =  duration_cast<duration_t>(end - start).count();
 
    return result;
 }
@@ -289,6 +299,11 @@ int main(int argc, char *argv[]) {
          default:
             std::cerr << "[ERROR] bad argument: " << opt << std::endl;
       }
+   }
+
+   ofstream output_file(output, std::ofstream::out | std::ofstream::trunc);
+   if (output_file.is_open()) {
+      output_file.close();
    }
 
    compute_max_profit(market_price, price_list, output);
