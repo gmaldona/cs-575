@@ -110,20 +110,6 @@ void read_price_lists(const std::string&  filename,
                      const price_lists_t& price_lists);
 
 /**
- * This implementation was inspired by
- * https://stackoverflow.com/questions/728972/finding-all-the-subsets-of-a-set
- * for an iterative solution for computing subsets. There are recursive
- * solutions that involve backtracking but opted for an iterative solution.
- *
- * BEWARE: The space complexity grows EXPONENTIALLY
- * Given a set of size n, the number of subsets computed is 2^n.
- *
- * @param set A pointer to a set of card structs
- * @return a vector of card structs
- */
-std::vector<__card_set_t> compute_subsets(const card_set_t& set);
-
-/**
  * Function that looks each card in a card set and computes the market price for
  * a given card MINUS what the user paid for the card
  *

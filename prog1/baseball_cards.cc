@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <stdexcept>
+#include <cmath>
 
 #include <getopt.h>
 
@@ -63,25 +64,6 @@ ostream & operator<<(ostream& os, const price_lists_t& price_list) {
       current_entry++;
    }
    return os;
-}
-
-vector<__card_set_t> compute_subsets(const card_set_t& set) {
-   vector<__card_set_t> subsets;
-   // empty set that is not going to use but is required
-   //    for the other sets to be iteratively built
-   subsets.push_back(std::vector<card_s>());
-
-   for (int i = 0; i < set->size(); ++i) {
-      vector<__card_set_t> temp(subsets);
-
-      for (int j = 0; j < temp.size(); ++j) {
-         temp[j].push_back((*set)[i]);
-      }
-      for (int j = 0; j < temp.size(); ++j) {
-         subsets.push_back(temp[j]);
-      }
-   }
-   return subsets;
 }
 
 void write_output(const std::string& filename,
@@ -197,6 +179,7 @@ cost_t compute_profit(const market_price_t& market_price,
 result_s
 compute_max_profit(const market_price_t& market_price,
                      const price_list_t&   price_list) {
+   size_t cards       = price_list.first.cards;
    cost_t max_cost    = price_list.first.max_cost;
    card_set_t set     = price_list.second;
 
@@ -222,17 +205,23 @@ compute_max_profit(const market_price_t& market_price,
       }
    }
 
-   for (auto& subset : compute_subsets(set)) {
-      if (! subset.empty()) {
-         try {
-             cost_t profit = compute_profit(market_price, subset);
-             if (compute_set_cost(subset) <= max_cost && profit > max_profit) {
-                max_profit    = profit;
-                maximized_set = subset;
-             }
-         } catch (const std::exception& e) {
-            throw;
+   size_t subsets = pow(2, cards) - 1;
+   for (size_t subset_index = 0; subset_index < subsets; ++subset_index) {
+      __card_set_t subset;
+      for (size_t card_index = 0; card_index < cards; ++card_index) {
+         if ( (subset_index >> card_index) & 1 ) {
+            subset.push_back((*set)[card_index]);
          }
+      }
+
+      try {
+         cost_t profit = compute_profit(market_price, subset);
+         if (compute_set_cost(subset) <= max_cost && profit > max_profit) {
+            max_profit    = profit;
+            maximized_set = subset;
+         }
+      } catch (const std::exception& e) {
+         throw;
       }
    }
 
