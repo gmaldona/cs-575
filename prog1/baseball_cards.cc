@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
 
    compute_max_profit(market_price, price_list, output);
 
-   std::cout << "[INFO] Writing results to: " << output << std::endl;
+   cout << "[INFO] Writing results to: " << output << endl << endl;
 
    return EXIT_SUCCESS;
 }
