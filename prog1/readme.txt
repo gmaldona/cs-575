@@ -1,5 +1,5 @@
 C++
-make
+make && ./program1 -m <market_price> -p <price_list> -o <output>
 
 I have done this assignment completely on my own. I have not copied it, nor have
 I given my solution to anyone else. I understand that if I am involved in
