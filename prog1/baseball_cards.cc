@@ -50,14 +50,13 @@ ostream& operator<<(ostream& os, const market_price_t& market_price) {
    for (auto& [name, price] : *market_price) {
       os << "\t" << name << " : " << price << std::endl;
    }
-   os << std::endl;
    return os;
 }
 
 ostream & operator<<(ostream& os, const price_lists_t& price_list) {
    uint64_t current_entry = 1;
    for (auto& [list_entry, card_set ] : *price_list) {
-      os << "Problem #" << current_entry << std::endl;
+      os << "Problem #" << current_entry << ":" << std::endl;
       for (auto& [name, price] : *card_set) {
          os << "\t" << name << " : " << price << std::endl;
       }
@@ -103,6 +102,8 @@ void read_market_price(const string& filename,
       while(market_price_file) {
          getline(market_price_file, line);
 
+         if (line.empty()) { continue; }
+
          if (line_number > 1) {
             string name    = line.substr(0, line.find(' '));
             uint64_t price = stoi(line.substr(line.find(' ') + 1));
@@ -114,6 +115,7 @@ void read_market_price(const string& filename,
       }
    } else {
       std::cerr << "Failed to open: " << filename << std::endl;
+      exit(1);
    }
 }
 
@@ -130,16 +132,23 @@ void read_price_lists(const std::string& filename,
 
          if (line.empty()) { break; }
 
-         uint64_t cards    = stoi(line.substr(0, line.find(' ')));;
+         uint64_t cards    = stoi(line.substr(0, line.find(' ')));
          uint64_t max_cost = stoi(line.substr(line.find(' ') + 1));
 
          price_list_s list_entry = { .cards = cards, .max_cost = max_cost };
          card_set_t card_set = std::make_shared<__card_set_t>();
 
+         // Used as a hack for hashing
+         list_entry.random_memory_ptr = reinterpret_cast<std::uintptr_t>(card_set.get());
+
          price_lists->insert(make_pair(list_entry, card_set));
 
          for (int i = 0; i < cards; ++i) {
+            if (price_lists_file.peek() == EOF) { break; }
+
             getline(price_lists_file, line);
+
+            if (line.empty()) { continue; }
 
             string name    = line.substr(0, line.find(' '));
             uint64_t cost  = stoi(line.substr(line.find(' ') + 1));
@@ -166,9 +175,10 @@ cost_t compute_profit(const market_price_t& market_price,
    for (auto& card : set) {
       __market_price_t::const_iterator itr = market_price->find(card.name);
       if (itr == market_price->end()) {
-         std::cerr << "[ERROR] card: " << card.name
-                   << "was not found in market_price list." << std::endl;
-         throw std::exception();
+         std::cerr << "[ERROR] Card \"" << card.name
+                   << "\" was not found in market_price list." << std::endl;
+         std::cerr << "[INFO] Skipping price list problem ... "     << std::endl;
+       throw std::exception();
       } else {
          profit += ((*market_price)[card.name] - card.cost);
       }
@@ -253,8 +263,13 @@ void compute_max_profit(const string& market_price_filename,
    for (
       auto& [list_entry, card_set] : *price_list
    ) {
-      auto result
-         = compute_max_profit(market_price, make_pair(list_entry, card_set));
+      result_s result;
+      try {
+         result
+            = compute_max_profit(market_price, make_pair(list_entry, card_set));
+      } catch (const std::exception& e) {
+         continue;
+      }
 
       if (problem == 1) {
          cout << endl << "============ OUTPUT ============" << endl << endl;

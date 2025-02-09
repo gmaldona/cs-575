@@ -45,6 +45,13 @@ struct card_s {
 };
 
 struct price_list_s {
+   /**
+    * price_list_s has a hashing function so that it can be used as a key in a
+    * map. If two price_list_s has the same cards and max_cost then the hash
+    * will collide.
+    */
+   uint64_t random_memory_ptr; // used for hashing
+
    uint64_t cards;
    uint64_t max_cost;
 
@@ -63,10 +70,10 @@ struct price_list_s {
 template <>
 struct std::hash<price_list_s> {
    std::size_t operator()(const price_list_s& price_list) const {
-      std::hash<size_t> hash_cards;
+      std::hash<size_t> hash_memory_ptr;
       std::hash<size_t> hash_max_cost;
 
-      return hash_cards(price_list.cards)
+      return hash_memory_ptr(price_list.random_memory_ptr)
          ^ (hash_max_cost(price_list.max_cost) << 1);
    }
 };
