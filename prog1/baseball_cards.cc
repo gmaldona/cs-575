@@ -176,8 +176,8 @@ cost_t compute_profit(const market_price_t& market_price,
       __market_price_t::const_iterator itr = market_price->find(card.name);
       if (itr == market_price->end()) {
          std::cerr << "[ERROR] Card \"" << card.name
-                   << "\" was not found in market_price list." << std::endl;
-         std::cerr << "[INFO] Skipping price list problem ... "     << std::endl;
+                   << "\" was not found in market_price list. "
+                   << "Skipping price list problem ... " << std::endl << std::endl;
        throw std::exception();
       } else {
          profit += ((*market_price)[card.name] - card.cost);
