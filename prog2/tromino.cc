@@ -201,61 +201,64 @@ void tromino(const int x_board,   const int y_board,
 
 int main() {
 
-   /* User input parsing for board size and missing tile (x,y) coordinate */
-   int board_size;
-   int x_missing, y_missing;
+   while (true) {
+      /* User input parsing for board size and missing tile (x,y) coordinate */
 
-   std::string input;
+      int board_size;
+      int x_missing, y_missing;
 
-   std::cout << "Please enter size of board as a power of 2 (0 to quit): ";
-   if (!std::getline(std::cin, input) || input.empty()) {
-      std::cerr << "[ERROR] Exiting...";
-      return EXIT_FAILURE;
+      std::string input;
+
+      std::cout << "Please enter size of board (need to be 2^n and 0 to quit): ";
+      if (!std::getline(std::cin, input) || input.empty()) {
+         std::cerr << "[ERROR] Exiting...";
+         return EXIT_FAILURE;
+      }
+      try {
+         board_size = std::stoi(input);
+      } catch (std::exception &e) {
+         std::cerr << "[ERROR] Failed to convert input to board size. Exiting ...";
+         return EXIT_FAILURE;
+      }
+      if (board_size == 0) {
+         return EXIT_SUCCESS;
+      }
+
+      if (!IS_POWER_OF_2(board_size) || board_size < 0) {
+         std::cerr << "[ERROR] Board size is not a power of 2. Exiting ...";
+         return EXIT_FAILURE;
+      }
+
+      std::cout <<
+                "Please enter coordinates of missing square (seperated by a space): ";
+      if (!std::getline(std::cin, input) || input.empty()) {
+         std::cerr << "[ERROR] Exiting ...";
+         return EXIT_FAILURE;
+      }
+      size_t delimiter = input.find(' ');
+      if (delimiter == std::string::npos) {
+         std::cerr << "[ERROR] Exiting ...";
+         return EXIT_FAILURE;
+      }
+      try {
+         x_missing = stoi(input.substr(0, delimiter));
+         y_missing = stoi(input.substr(delimiter));
+      } catch (std::exception &e) {
+         std::cerr <<
+                   "[ERROR] Failed to convert input to (x, y) coordinate. Exiting ...";
+         return EXIT_FAILURE;
+      }
+
+      board = create_board(board_size);
+      total_board_size = board_size;
+
+      board[board_size - y_missing - 1][x_missing] = tile_e::MS;
+
+      tromino(0, 0, x_missing, y_missing, board_size);
+
+      display_board(board, board_size);
+      destroy_board(board, board_size);
    }
-   try {
-      board_size = std::stoi(input);
-   } catch (std::exception& e) {
-      std::cerr << "[ERROR] Failed to convert input to board size. Exiting ...";
-      return EXIT_FAILURE;
-   }
-   if (board_size == 0) {
-      return EXIT_SUCCESS;
-   }
-
-   if (! IS_POWER_OF_2(board_size) || board_size < 0) {
-      std::cerr << "[ERROR] Board size is not a power of 2. Exiting ...";
-      return EXIT_FAILURE;
-   }
-
-   std::cout <<
-      "Please enter coordinates of missing square (seperated by a space): ";
-   if (!std::getline(std::cin, input) || input.empty()) {
-      std::cerr << "[ERROR] Exiting ...";
-      return EXIT_FAILURE;
-   }
-   size_t delimiter = input.find(' ');
-   if (delimiter == std::string::npos) {
-      std::cerr << "[ERROR] Exiting ...";
-      return EXIT_FAILURE;
-   }
-   try {
-      x_missing = stoi(input.substr(0, delimiter));
-      y_missing = stoi(input.substr(delimiter));
-   } catch (std::exception& e) {
-      std::cerr <<
-         "[ERROR] Failed to convert input to (x, y) coordinate. Exiting ...";
-      return EXIT_FAILURE;
-   }
-
-   board = create_board(board_size);
-   total_board_size = board_size;
-
-   board[board_size - y_missing - 1][x_missing] = tile_e::MS;
-
-   tromino(0, 0, x_missing, y_missing, board_size);
-
-   display_board(board, board_size);
-   destroy_board(board, board_size);
 
    return EXIT_SUCCESS;
 }
