@@ -31,7 +31,7 @@
 #ifndef PROG2__TRIMINO_HH_
 #define PROG2__TRIMINO_HH_
 
-#include <stdint.h>
+#include <cstdint>
 
 //===== GM =========================================================== 80 ====>>
 

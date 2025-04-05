@@ -29,3 +29,7 @@ $(TARGET): $(TARGET).o
 
 $(TARGET).o: $(TARGET).cc $(TARGET).h
 	$(CC) $(CFLAGS) -c $(TARGET).cc
+
+.PHONY: clean
+clean:
+	$(RM) program2

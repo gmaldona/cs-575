@@ -196,7 +196,6 @@ void tromino(const int x_board,   const int y_board,
    {
       tromino(x_board + offset, y_board, x_missing, y_missing, board_size / 2);
    }
-
 }
 
 int main() {
@@ -221,7 +220,7 @@ int main() {
          return EXIT_FAILURE;
       }
       if (board_size == 0) {
-         return EXIT_SUCCESS;
+         continue;
       }
 
       if (!IS_POWER_OF_2(board_size) || board_size < 0) {
