@@ -116,7 +116,7 @@ public class LCS {
      * @param lenLCS LCS table
      */
     public static void displayLenLCS(LCSValue[][] lenLCS) {
-        // display 2d grid of len-lcs. TODO: Add some string padding to make it pretty and easy to read.
+        // display 2d grid of len-lcs.
         System.out.print("\n");
 
         for (int i = 0; i < lenLCS.length; i++) {
@@ -160,6 +160,43 @@ public class LCS {
         }
 
         displayLenLCS(lenLCS);
+
+        int largestSequenceCount = 0;
+        int x = 0;
+        int y = 0;
+        for (int i = lenLCS.length - 1; i >= 0; i--) {
+            for (int j = lenLCS[i].length - 1; j >= 0; j--) {
+                if (largestSequenceCount < lenLCS[i][j].getValue() && lenLCS[i][j].getDirection() == Direction.DGNL) {
+                    largestSequenceCount = lenLCS[i][j].getValue();
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+
+        StringBuilder largestSequenceString = new StringBuilder();
+        LCSValue entry = lenLCS[x][y];
+        while (entry.getDirection() != Direction.NULL) {
+            switch (entry.getDirection()) {
+                case LEFT -> {
+                    entry = lenLCS[x][y - 1];
+                     y    = y - 1;
+                }
+                case __UP -> {
+                    entry = lenLCS[x - 1][y];
+                    x     = x - 1;
+                }
+                case DGNL -> {
+                    largestSequenceString.insert(0, target.charAt(y - 1));
+                    entry = lenLCS[x - 1][y - 1];
+                    x     = x - 1;
+                    y     = y - 1;
+                }
+            }
+        }
+
+        System.out.println("Length of LCS: " +   largestSequenceCount);
+        System.out.println("LCS: " +   largestSequenceString);
     }
 
     public static void main(String[] args) {
