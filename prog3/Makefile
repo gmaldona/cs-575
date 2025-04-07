@@ -19,10 +19,10 @@
 all: lcs floyd
 
 lcs : LCS.java
-	javac lcs.java
+	javac LCS.java
 
 floyd : Floyd.java
-	javac floyd.java
+	javac Floyd.java
 
 .PHONY: clean
 clean:
