@@ -18,10 +18,10 @@
 .PHONY: default
 all: lcs floyd
 
-lcs : lcs.java
+lcs : LCS.java
 	javac lcs.java
 
-floyd : floyd.java
+floyd : Floyd.java
 	javac floyd.java
 
 .PHONY: clean
