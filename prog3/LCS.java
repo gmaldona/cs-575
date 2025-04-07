@@ -1,5 +1,3 @@
-package edu.binghamton.cs.gmaldonado.prog3;
-
 import java.util.Arrays;
 
 /*
@@ -34,7 +32,7 @@ import java.util.Arrays;
  *      - max{lenLCS(i - 1, j), lenLCS(i, j - 1)}   otherwise
  *
  */
-public class LCS {
+class LCS {
 
     enum Direction {
         __UP("U"), // up        direction
@@ -108,12 +106,10 @@ public class LCS {
         for (int row = 0; row < lenLCS.length; row++) {
             lenLCS[row][0] = new LCSValue(0, Direction.NULL);
         }
-        
-        displayLenLCS(lenLCS);
     }
 
     /**
-     *
+     * Used for debugging. Should not appear in the final output.
      * @param lenLCS LCS table
      */
     public static void displayLenLCS(LCSValue[][] lenLCS) {
@@ -143,7 +139,6 @@ public class LCS {
         for (int i = 1; i <= domain.length(); i++) {
             for (int j = 1; j <= target.length(); j++) {
 
-                System.out.println(i + ", " + j);
                 if (domain.charAt(i - 1) == target.charAt(j - 1)) {
                     lenLCS[i][j] = new LCSValue(1 + lenLCS[i - 1][j - 1].getValue(), Direction.DGNL);
                 } else {
@@ -157,8 +152,6 @@ public class LCS {
                 }
             }
         }
-
-        displayLenLCS(lenLCS);
 
         int largestSequenceCount = 0;
         int x = 0;

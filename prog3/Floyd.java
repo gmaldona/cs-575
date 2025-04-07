@@ -1,5 +1,3 @@
-package edu.binghamton.cs.gmaldonado.prog3;
-
 /*
  * CS 575 - Programming Assignment 3
  * Floyd-Warshall algorithm using dynamic programming approach.
@@ -34,7 +32,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Floyd {
+class Floyd {
 
     /**
      * The list of {@link Problem}s to solve from the graph-input file
@@ -346,7 +344,7 @@ public class Floyd {
             System.exit(1);
         }
 
-        System.err.println("[FINE] Loading input file: " + args[0]);
+        System.err.println("Loading input file: " + args[0]);
 
         final File inputFile  = new File(args[0]);
         final Path outputPath = inputFile.toPath().getParent().resolve("output.txt");
@@ -358,6 +356,6 @@ public class Floyd {
 
         FileWriter.writeSolutionToFile(solutions, outputPath);
 
-        System.err.println("[FINE] Generating output file: " + outputPath);
+        System.err.println("Generating output file: " + outputPath);
     }
 }

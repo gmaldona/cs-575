@@ -1,4 +1,4 @@
-# CS 575 - Programming Assignment 2 
+# CS 575 - Programming Assignment 3 
 #
 # Graduate student @ School of Computing, Binghamton University.
 #
@@ -15,21 +15,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-CC     = g++
-CFLAGS = -std=c++17 # -Wall -Wextra -pedantic -g -O3
-TARGET = tromino
-OUT    = program2
-
 .PHONY: default
-all : $(TARGET)
+all: lcs floyd
 
-$(TARGET): $(TARGET).o
-	$(CC) $(CFLAGS) -o $(OUT) $(TARGET).o
-	$(RM) *.o
+lcs : lcs.java
+	javac lcs.java
 
-$(TARGET).o: $(TARGET).cc $(TARGET).h
-	$(CC) $(CFLAGS) -c $(TARGET).cc
+floyd : floyd.java
+	javac floyd.java
 
 .PHONY: clean
 clean:
-	$(RM) program2
+	$(RM) *.class
