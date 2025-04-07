@@ -1,11 +1,9 @@
 package edu.binghamton.cs.gmaldonado.prog3;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
 
 /*
- * CS 575 - Programming Assignment 2
+ * CS 575 - Programming Assignment 3
  * Longest Common Subsequence (LCS) algorithm using dynamic programming approach.
  *
  * Graduate student @ School of Computing, Binghamton University.
@@ -23,6 +21,9 @@ import java.util.Random;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/* 10% of the grade will be based on good coding style and meaningful comments. */
+/* A little subjective... but okay */
 
 /**
  * High level recurrence equation for the computation of LCS using Dynamic Programming
@@ -107,8 +108,8 @@ public class LCS {
         for (int row = 0; row < lenLCS.length; row++) {
             lenLCS[row][0] = new LCSValue(0, Direction.NULL);
         }
-
-         displayLenLCS(lenLCS);
+        
+        displayLenLCS(lenLCS);
     }
 
     /**
@@ -123,9 +124,7 @@ public class LCS {
             for (int j = 0; j < lenLCS[i].length; j++) {
                 StringBuilder padding = new StringBuilder();
 
-                for (int p = 0; p < 5 - Integer.toString(lenLCS[i][j].getValue()).length(); p++) {
-                    padding.append(" ");
-                }
+                padding.append(" ".repeat(Math.max(0, 5 - Integer.toString(lenLCS[i][j].getValue()).length())));
 
                 System.out.print(padding.toString() + lenLCS[i][j].getValue() + "(" + lenLCS[i][j].getDirection().getCode() + ")\t");
             }
@@ -177,6 +176,8 @@ public class LCS {
         StringBuilder largestSequenceString = new StringBuilder();
         LCSValue entry = lenLCS[x][y];
         while (entry.getDirection() != Direction.NULL) {
+            // Switch based on the direction from the computation.
+            // Follow the direction until you get to a Direction.NULL
             switch (entry.getDirection()) {
                 case LEFT -> {
                     entry = lenLCS[x][y - 1];
@@ -186,6 +187,7 @@ public class LCS {
                     entry = lenLCS[x - 1][y];
                     x     = x - 1;
                 }
+                // If diagonal, there is a subsequence.
                 case DGNL -> {
                     largestSequenceString.insert(0, target.charAt(y - 1));
                     entry = lenLCS[x - 1][y - 1];
@@ -219,9 +221,7 @@ public class LCS {
             larger  = target.length();
             smaller = domain.length();
         }
-        for (int i = 0; i < larger - smaller; i++) {
-            padding.append(" ");
-        }
+        padding.append(" ".repeat(larger - smaller));
 
         if (domain.length() < target.length()) {
             domain = domain + padding;

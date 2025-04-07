@@ -1,7 +1,7 @@
 package edu.binghamton.cs.gmaldonado.prog3;
 
 /*
- * CS 575 - Programming Assignment 2
+ * CS 575 - Programming Assignment 3
  * Floyd-Warshall algorithm using dynamic programming approach.
  *
  * Graduate student @ School of Computing, Binghamton University.
@@ -20,6 +20,9 @@ package edu.binghamton.cs.gmaldonado.prog3;
  * SOFTWARE.
  */
 
+/* 10% of the grade will be based on good coding style and meaningful comments. */
+/* A little subjective... but okay */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +36,9 @@ import java.util.regex.Pattern;
 
 public class Floyd {
 
+    /**
+     * The list of {@link Problem}s to solve from the graph-input file
+     */
     private final List<Problem> problems;
 
     /**
@@ -40,24 +46,24 @@ public class Floyd {
      */
     public static abstract class Couplet {
 
-        private Integer id;
-        private Integer n;
+        private int id;
+        private int n;
 
-        public Integer getId() {
+        public int getId() {
             return id;
         }
 
-        public Couplet setId(final Integer id) {
+        public Couplet setId(final int id) {
             this.id = id;
             return this;
         }
 
-        public Couplet setN(final Integer n) {
+        public Couplet setN(final int n) {
             this.n = n;
             return this;
         }
 
-        public Integer getN() {
+        public int getN() {
             return n;
         }
     }
@@ -67,66 +73,84 @@ public class Floyd {
      */
     public static class Problem extends Couplet {
 
-        private Integer[][] graph;
+        private int[][] graph;
 
-        public Integer[][] getGraph() {
+        public int[][] getGraph() {
             return graph;
         }
 
-        public Problem initializeGraph(final Integer n) {
-            graph = new Integer[n][n];
+        public Problem initializeGraph(final int n) {
+            graph = new int[n][n];
             return this;
         }
     }
 
+    /**
+     * Wrapper class to encapsulate what a solution looks like.
+     */
     public static class Solution extends Couplet {
 
-        private Integer[][] distances;
-        private Integer[][] pointers;
+        private Problem problem;
+        private int[][] distances;
+        private int[][] pointers;
 
-        public Solution setDistances(final Integer[][] distances) {
+        public Solution setProblem(Problem problem) {
+            this.problem = problem;
+            return this;
+        }
+
+        public Solution setDistances(final int[][] distances) {
             this.distances = distances;
             return this;
         }
 
-        public Solution setPointers(final Integer[][] pointers) {
+        public Solution setPointers(final int[][] pointers) {
             this.pointers = pointers;
             return this;
         }
 
-        public Integer[][] getDistances() {
+        public Problem getProblem() {
+            return problem;
+        }
+
+        public int[][] getDistances() {
             return distances;
         }
 
-        public Integer[][] getPointers() {
+        public int[][] getPointers() {
             return pointers;
         }
     }
 
     /**
      *
-     * @param problems
+     * @param problems a {@link List} of {@link Problem} to solve
      */
     public Floyd(List<Problem> problems) {
         this.problems = problems;
     }
 
+    /**
+     *
+     * @return a {@link List} of {@link Solution} that were solved. One solution per {@link Problem}.
+     */
     public List<Solution> computeShortestPaths() {
 
         /* DS to hold the problem solutions so the writer can iterator over each solution and write to disk */
         List<Solution> solutions = new ArrayList<>();
 
         for (Problem problem : problems) {
+            int vertices = problem.getN();
+            int[][] pointers  = new int[vertices][vertices];
+            int[][] distances = new int[vertices][vertices];
 
-            Integer vertices = problem.getN();
-            Integer[][] pointers = new Integer[vertices][vertices];
-            Integer[][] distances = new Integer[vertices][vertices];
-
-            // Shallow copy. Even though they are just integers, I did use "Integer" so just in case.
+            // Initialization of distance and pointer matrices.
+            // Distance matrix is initialized to the weights of the input graph
+            // Pointer matrix is initialized to all zeros
             for (int row = 0; row < vertices; row++) {
                 for (int col = 0; col < vertices; col++) {
                     distances[row][col] = problem.getGraph()[row][col];
-                    pointers[row][col]  = 0;
+                    pointers [row][col]  = 0;
                 }
             }
 
@@ -134,9 +158,11 @@ public class Floyd {
             for (int k = 0; k < vertices; k++) {
                 for (int i = 0; i < vertices; i++) {
                     for (int j = 0; j < vertices; j++) {
-                        if (distances[i][j] > distances[i][k] + distances[k][i]) {
+                        if (distances[i][j] > distances[i][k] + distances[k][j]) {
                             distances[i][j] = distances[i][k] + distances[k][j];
-                            pointers[i][j] = k;
+                            pointers [i][j] = k + 1;
+                        } else {
+                            distances[i][j] = distances[i][j];
                         }
                     }
                 }
@@ -145,52 +171,31 @@ public class Floyd {
             solutions.add((Solution) new Solution()
                                 .setDistances(distances)
                                 .setPointers(pointers)
+                                .setProblem(problem)
                                 .setId(problem.getId())
                                 .setN(problem.getN())
             );
-
-//            System.out.println(prettyPrintGraph(pointers));
         }
-
         return solutions;
     }
 
-    public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
-            System.err.println("Usage: java floyd <file>");
-            System.exit(1);
-        }
-
-        System.err.println("[FINE] Loading input file: " + args[0]);
-
-        final File inputFile  = new File(args[0]);
-        final Path outputPath = inputFile.toPath().getParent().resolve("output.txt");
-
-        List<Problem> problems = FileReader.generateProblemsFromFile(inputFile);
-
-        List<Solution> solutions = new Floyd(problems)
-                                        .computeShortestPaths();
-
-        System.err.println("[FINE] Generating output file: " + outputPath);
-    }
-
     /**
+     * Format a matrix to be printable to stdin or to a file. Includes number padding so the cols are aligned.
      *
-     * @param graph
+     * @param graph Matrix to be pretty printed
+     * @return A pretty printed matrix
      */
-    public static String prettyPrintGraph(final Integer[][] graph) {
-        String prettyPrint = "";
+    public static String prettyPrintGraph(final int[][] graph) {
+        StringBuilder prettyPrint = new StringBuilder();
 
         for (int i = 0; i < graph.length; i++) {
             for (int j = 0; j < graph[i].length; j++) {
                 StringBuilder padding = new StringBuilder();
-
-                padding.append(" ".repeat(Math.max(0, 3 - Integer.toString(graph[i][j]).length())));
-
-                prettyPrint = prettyPrint +  padding.toString() + (graph[i][j] != null ? graph[i][j] : "_") + "\t";
-            }   prettyPrint = prettyPrint + "\n"; // hiding new scope
+                padding.append(" ".repeat(Math.max(0, 3 - Integer.toString(graph[i][j]).length()))); // padding to align cols
+                prettyPrint.append(padding).append(graph[i][j]).append("\t");
+            }   prettyPrint.append("\n"); // hiding new scope
         }
-        return prettyPrint;
+        return prettyPrint.toString();
     }
 
     /**
@@ -199,9 +204,44 @@ public class Floyd {
     protected static class FileWriter {
 
         /**
+         * Interface to allow for an inner-function. This is useful for debug and commenting in and out
+         * writing the intermediate paths from the output file.
+         */
+        public interface IntermediatePathWriter {
+            void writeIntermediatePath() throws IOException;
+        }
+
+        /**
+         * Prints intermediate vertices between some Vx and Vy to the outputPath.
+         * Recursive.
          *
-         * @param solutions
-         * @param outputPath
+         * @param distances solution distance matrix
+         * @param pointers solution pointer matrix
+         * @param q index in a solution matrix
+         * @param r index in a solution matrix
+         * @param outputPath path to output file
+         * @return the total distance to traverse path
+         */
+        public static int intermediatePath(final int[][] distances,
+                                           final int[][] pointers,
+                                           final int q, final int r,
+                                           final Path outputPath) throws IOException {
+            int totalDistance = 0;
+            if (pointers[q][r] != 0) {
+                totalDistance += intermediatePath(distances, pointers, q, pointers[q][r] - 1, outputPath);
+                Files.write(outputPath, ("V" + pointers[q][r] + " ").getBytes(), StandardOpenOption.APPEND);
+                totalDistance += intermediatePath(distances, pointers, pointers[q][r] - 1, r, outputPath);
+            } else {
+                totalDistance += distances[q][r];
+            }
+            return totalDistance;
+        }
+
+        /**
+         * Writes each {@link Solution} results in the output.txt nicely formatted.
+         *
+         * @param solutions a {@link List} of {@link Solution}s
+         * @param outputPath The path to the output.txt
          */
         public static void writeSolutionToFile(final List<Solution> solutions, final Path outputPath) throws IOException {
 
@@ -219,7 +259,24 @@ public class Floyd {
                 Files.write(outputPath, "P matrix:\n".getBytes(), StandardOpenOption.APPEND);
                 Files.write(outputPath, prettyPrintGraph(solution.pointers).getBytes(), StandardOpenOption.APPEND);
 
-                Files.write(outputPath, "\n".getBytes(), StandardOpenOption.APPEND);
+                new IntermediatePathWriter() {
+                    @Override
+                    public void writeIntermediatePath() throws IOException {
+                        // Getting the output file in the right format. Might look messy but look at the file output if you want to see
+                        int[][] graph = solution.getProblem().getGraph();
+                        for (int i = 1; i <= graph.length; i++) {
+                            Files.write(outputPath, ("\nV" + i + "-Vj: shortest path and length\n").getBytes(), StandardOpenOption.APPEND);
+
+                            for (int j = 1; j <= graph.length; j++) {
+                                Files.write(outputPath, ("V" + i + " ").getBytes(), StandardOpenOption.APPEND);
+                                int distance = intermediatePath(solution.getDistances(), solution.getPointers(), i - 1, j - 1, outputPath);
+                                Files.write(outputPath, ("V" + j + " ").getBytes(), StandardOpenOption.APPEND);
+                                Files.write(outputPath, (": " + distance).getBytes(), StandardOpenOption.APPEND);
+                                Files.write(outputPath, "\n".getBytes(), StandardOpenOption.APPEND);
+                            }
+                        }
+                    }
+                }.writeIntermediatePath();
             }
         }
     }
@@ -239,7 +296,7 @@ public class Floyd {
             // regex to find the "Problem" label along with the Problem ID and Number of Vertices
             Pattern PROBLEM_PATTERN = Pattern.compile("Problem\\s+([0-9]+):\\s*n\\s*=\\s*([0-9]+)");
             // regex to find the weights of the graph from the graph-file
-            Pattern WEIGHTS_PATTERN = Pattern.compile("[0-9]+");
+            Pattern WEIGHTS_PATTERN = Pattern.compile("-?[0-9]+");
 
             String line;
             List<Problem> problems = new ArrayList<>();
@@ -281,5 +338,26 @@ public class Floyd {
             }
             return problems;
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        if (args.length != 1) {
+            System.err.println("Usage: java floyd <file>");
+            System.exit(1);
+        }
+
+        System.err.println("[FINE] Loading input file: " + args[0]);
+
+        final File inputFile  = new File(args[0]);
+        final Path outputPath = inputFile.toPath().getParent().resolve("output.txt");
+
+        List<Problem> problems = FileReader.generateProblemsFromFile(inputFile);
+
+        List<Solution> solutions = new Floyd(problems)
+                .computeShortestPaths();
+
+        FileWriter.writeSolutionToFile(solutions, outputPath);
+
+        System.err.println("[FINE] Generating output file: " + outputPath);
     }
 }
