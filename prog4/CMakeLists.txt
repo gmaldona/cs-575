@@ -26,9 +26,16 @@ add_executable(bruteforce
 target_include_directories(bruteforce PUBLIC
                ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
-# add_executable(igreedy
-#                ${COMMON_SRC}
-#                src/impl/GreedyKnapsack.cc)               
+add_executable(dynpro
+               ${COMMON_SRC}
+               src/impl/DPKnapsack.cc)
 
-# target_include_directories(igreedy PUBLIC
-#                ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+target_include_directories(dynpro PUBLIC
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+
+add_executable(igreedy
+               ${COMMON_SRC}
+               src/impl/GreedyKnapsack.cc)               
+
+target_include_directories(igreedy PUBLIC
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/)
