@@ -20,6 +20,15 @@
 #ifndef PROG4__KNAPSACK_FILE_READER_HH_
 #define PROG4__KNAPSACK_FILE_READER_HH_
 
+#define DELIMITER " "
+#define RET_KS_ERROR                                                                                      \
+    do                                                                                                    \
+    {                                                                                                     \
+        SPDLOG_WARN("Error detected in auto-generated knapsack file. Please regenerate knapsack input."); \
+        return nullptr;                                                                                   \
+    } while (0)
+;
+
 #include <filesystem>
 #include <memory>
 
@@ -38,8 +47,8 @@ namespace ks
     public:
         /**
          * @brief
-         * 
-         * @param [in] knapsackFilePath 
+         *
+         * @param [in] knapsackFilePath
          * @returns
          */
         static ks::Knapsack::unique_ptr read(const std::filesystem::path& knapsackFilePath);
