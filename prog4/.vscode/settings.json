@@ -55,6 +55,7 @@
         "iostream": "cpp",
         "numeric": "cpp",
         "fstream": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "filesystem": "cpp"
     }
 }
