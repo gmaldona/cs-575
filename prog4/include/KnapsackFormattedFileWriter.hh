@@ -20,6 +20,7 @@
 #ifndef PROG4__KNAPSACK_FORMATTED_FILE_WRITER_HH_
 #define PROG4__KNAPSACK_FORMATTED_FILE_WRITER_HH_
 
+#define OUTPUT_FILE "output.txt"
 
 #include <filesystem>
 #include <string>
@@ -36,7 +37,15 @@ namespace ks
      * @param [in] knapsack Pointer to knapsack to format into a string
      * @returns a formatted string containing the metadata of the knapsack problem space
      */
-    std::string formatKnapsack(const Knapsack::unique_ptr& knapsack);
+    std::string formatKnapsack(const Knapsack::shared_ptr& knapsack);
+
+    /**
+     * @brief
+     * 
+     * @param [in] knapsack Pointer to knapsack to format into a string
+     * @returns a formatted string containing the bruteforce solution to the knapsack problem space
+     */
+    std::string formatBruteforceKnapsack(const Knapsack::shared_ptr& knapsack);
 
     class KnapsackFormattedFileWriter
     {
@@ -50,7 +59,8 @@ namespace ks
          *
          * @returns If knapsack write to file was successful
          */
-        static bool at(const Knapsack::unique_ptr& knapsack, const std::filesystem::path& outputPath);
+        static bool at(const Knapsack::shared_ptr& knapsack, const std::filesystem::path& outputPath,
+            ks::KnapsackImpl impl = ks::KnapsackImpl::INIT);
 
     private:
         KnapsackFormattedFileWriter() = default;
