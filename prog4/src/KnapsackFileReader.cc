@@ -17,25 +17,34 @@
  * SOFTWARE.
  */
 
-#include "KnapsackFileReader.hh"
-
 #include <fstream>
-#include <spdlog/spdlog.h>
+#include <iostream>
+#include <memory>
+
+#include "KnapsackFileReader.hh"
+#include "spdlog/spdlog.h"
 
 //===== GM =========================================================== 80 ====>>
 
-// bool KnapsackFileReader::read(std::filesystem::path knapsackFilePath,
-// Knapsack::unique_ptr knapsack)
-// {
-//     std::ifstream knapsackFile{knapsackFilePath};
-//     if (!knapsackFile.is_open())
-//     {
-//         SPDLOG_ERROR("Failed to open: {}", knapsackFilePath.c_str());
-//         return false;
-//     }
+ks::Knapsack::unique_ptr ks::KnapsackFileReader::read(
+    const std::filesystem::path& knapsackFilePath)
+{
+    std::ifstream knapsackFile;
+    knapsackFile.open(knapsackFilePath);
 
+    if (!knapsackFile.is_open())
+    {
+        SPDLOG_WARN("Failed to open knapsack file: {}", knapsackFilePath.c_str());
+        return nullptr;
+    }
 
-//     return true;
-// }
+    std::string line;
+    while (getline(knapsackFile, line))
+    {
+        std::cout << line << std::endl;
+    }
+
+    return std::make_unique<ks::Knapsack>();
+}
 
 //===== GM =========================================================== 80 ====>>
