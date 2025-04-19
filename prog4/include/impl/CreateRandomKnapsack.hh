@@ -35,9 +35,7 @@
 
 namespace ks::random
 {
-
     ks::Knapsack::unique_ptr createKnapsack();
-
 } // namespace ks::random
 
 #endif // PROG4__CREATE_RANDOM_KNAPSACK_HH_
