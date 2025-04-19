@@ -21,8 +21,8 @@ AccessModifierOffset: -4
 # AlignAfterOpenBracket: Align
 AlignAfterOpenBracket: DontAlign
 # AlignArrayOfStructures: None
-# AlignConsecutiveAssignments:
-#  Enabled:         true
+# AlignConsecutiveAssignments: true
+  # Enabled:         true
 #   AcrossEmptyLines: false
 #   AcrossComments:  false
 #   AlignCompound:   false
@@ -36,8 +36,8 @@ AlignConsecutiveAssignments: Consecutive
 #   AlignCompound:   false
 #   AlignFunctionPointers: false
 #   PadOperators:    false
-# AlignConsecutiveDeclarations:
-  # Enabled:         true
+AlignConsecutiveDeclarations:
+  Enabled:         true
 #   AcrossEmptyLines: false
 #   AcrossComments:  false
 #   AlignCompound:   false
@@ -140,7 +140,7 @@ BreakBeforeBraces: Allman
 # BreakBeforeInlineASMColon: OnlyMultiline
 # BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
-# BreakFunctionDefinitionParameters: false
+BreakFunctionDefinitionParameters: true
 # BreakInheritanceList: BeforeColon
 # BreakStringLiterals: true
 # BreakTemplateDeclarations: MultiLine
