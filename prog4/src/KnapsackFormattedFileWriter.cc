@@ -27,12 +27,12 @@
 
 namespace ks
 {
-    std::string formatKnapsack(
-        const Knapsack::unique_ptr& knapsack)
+    std::string formatInitKnapsack(
+        const Knapsack::shared_ptr& knapsack)
     {
         // clang-format off
         std::string formatted = std::to_string(knapsack->getProblemSpace().size()) + " "
-                              + std::to_string(knapsack->getMaxWeight()) + "\n\n";
+                              + std::to_string(knapsack->getMaxWeight()) + "\n";
         // clang-format on
 
         for (auto& item : knapsack->getProblemSpace())
@@ -48,8 +48,30 @@ namespace ks
         return formatted;
     }
 
+    std::string formatBruteforceKnapsack(
+        const Knapsack::shared_ptr& knapsack)
+    {
+        // clang-format off
+        std::string formatted = std::to_string(knapsack->getItems()->size()) + " "
+                              + std::to_string(knapsack->getItemsProfit()) + " "
+                              + std::to_string(knapsack->getItemsWeight()) + "\n\n";
+        // clang-format on
+
+        for (auto& item : *(knapsack->getItems()))
+        {
+            // clang-format off
+            formatted += (item.name + " " 
+                      +   std::to_string(item.price) + " " 
+                      +   std::to_string(item.weight) + "\n"
+                    );
+            // clang-format on
+        }
+
+        return formatted;
+    }
+
     bool ks::KnapsackFormattedFileWriter::at(
-        const Knapsack::unique_ptr& knapsack, const std::filesystem::path& outputPath)
+        const Knapsack::shared_ptr& knapsack, const std::filesystem::path& outputPath, ks::KnapsackImpl impl)
     {
         std::ofstream outputFile;
 
@@ -60,8 +82,25 @@ namespace ks
             return false;
         }
 
-        outputFile << formatKnapsack(knapsack);
-        SPDLOG_INFO("Writing Knapsack to: {}", outputPath.c_str());
+        switch (impl)
+        {
+        case ks::KnapsackImpl::INIT:
+            outputFile << formatInitKnapsack(knapsack);
+            break;
+        case ks::KnapsackImpl::BRUTEFORCE:
+            outputFile << formatBruteforceKnapsack(knapsack);
+            break;
+        case ks::KnapsackImpl::DP:
+            break;
+        case ks::KnapsackImpl::GREEDY:
+            break;
+        default:
+            SPDLOG_WARN("Internal implementation choice error.");
+            return false;
+        }
+
+
+        SPDLOG_INFO("Writing to: {}", outputPath.c_str());
         return true;
     }
 } // namespace ks
