@@ -61,7 +61,7 @@ ks::Knapsack::shared_ptr ks::random::createKnapsack()
         ks::Knapsack::weight_t itemWeight = weight(generator);
         // clang-format off
         items.push_back(ks::Knapsack::Item {
-            .name = "item" + std::to_string(i),
+            .name = "item" + std::to_string(i + 1),
             .price = itemProfit,
             .weight = itemWeight
         });
