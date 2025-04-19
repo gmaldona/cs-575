@@ -19,12 +19,12 @@ add_executable(createkn01
 target_include_directories(createkn01 PUBLIC
                ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
-# add_executable(bruteforce
-#                ${COMMON_SRC}
-#                src/impl/BruteforceKnapsack.cc)
+add_executable(bruteforce
+               ${COMMON_SRC}
+               src/impl/BruteforceKnapsack.cc)
 
-# target_include_directories(bruteforce PUBLIC
-#                ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+target_include_directories(bruteforce PUBLIC
+               ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 
 # add_executable(igreedy
 #                ${COMMON_SRC}
