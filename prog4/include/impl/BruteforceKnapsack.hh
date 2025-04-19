@@ -36,7 +36,12 @@ namespace ks::bf
     void compute(
         std::vector<ks::Knapsack::Item> subset, ks::Knapsack::profit_t* profit, ks::Knapsack::weight_t* weight);
 
-    void compute(ks::Knapsack::unique_ptr& knapsack);
+    /**
+     * @brief Finds the subset with the most profit and minimum weight.
+     *
+     * @param [in] knapsack The entire problem space of the knapsack problem
+     */
+    void compute(const ks::Knapsack::shared_ptr& knapsack);
 
 } // namespace ks::bf
 

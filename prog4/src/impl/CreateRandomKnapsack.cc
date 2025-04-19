@@ -22,6 +22,7 @@
 #include <list>
 #include <numeric>
 #include <random>
+#include <stdlib.h>
 
 #include "KnapsackFormattedFileWriter.hh"
 #include "impl/CreateRandomKnapsack.hh"
@@ -39,7 +40,7 @@
  * 5 and 20. Set the capacity of the knapsack W = floor(0.6 * ∑! 𝑤i).
  */
 
-ks::Knapsack::unique_ptr ks::random::createKnapsack()
+ks::Knapsack::shared_ptr ks::random::createKnapsack()
 {
     std::random_device randomDeviceSeed;
     std::mt19937       generator(randomDeviceSeed());
@@ -78,7 +79,7 @@ ks::Knapsack::unique_ptr ks::random::createKnapsack()
                                                     );
     // clang-format on
 
-    return std::make_unique<Knapsack>(items, knapsackWeight);
+    return std::make_shared<Knapsack>(items, knapsackWeight);
 }
 
 int main(
@@ -91,9 +92,11 @@ int main(
     }
 
     std::filesystem::path    knapsackOutputFile{argv[1]};
-    ks::Knapsack::unique_ptr knapsack{ks::random::createKnapsack()};
+    ks::Knapsack::shared_ptr knapsack{ks::random::createKnapsack()};
 
-    ks::KnapsackFormattedFileWriter::at(knapsack, knapsackOutputFile);
+    ks::KnapsackFormattedFileWriter::at(knapsack, knapsackOutputFile, ks::KnapsackImpl::INIT);
+
+    return EXIT_SUCCESS;
 }
 
 //===== GM =========================================================== 80 ====>>

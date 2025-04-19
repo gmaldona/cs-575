@@ -21,10 +21,14 @@
 #include <cmath>
 #include <fstream>
 #include <memory>
-#include <spdlog/spdlog.h>
+#include <ostream>
+#include <stdlib.h>
 
+#include "Knapsack.hh"
 #include "KnapsackFileReader.hh"
+#include "KnapsackFormattedFileWriter.hh"
 #include "impl/BruteforceKnapsack.hh"
+#include "spdlog/spdlog.h"
 
 //===== GM =========================================================== 80 ====>>
 
@@ -39,10 +43,11 @@ void ks::bf::compute(
 }
 
 void ks::bf::compute(
-    ks::Knapsack::unique_ptr& knapsack)
+    const ks::Knapsack::shared_ptr& knapsack)
 {
-    ks::Knapsack::profit_t max_profit{0};
-    ks::Knapsack::weight_t min_weight{std::numeric_limits<ks::Knapsack::weight_t>::max()};
+    ks::Knapsack::profit_t          maxProfit{0};
+    ks::Knapsack::weight_t          minWeight{std::numeric_limits<ks::Knapsack::weight_t>::max()};
+    std::vector<ks::Knapsack::Item> solutionSubset{};
 
     size_t subsets = std::pow(2, knapsack->getProblemSpace().size()) - 1;
     for (size_t subset_index = 0; subset_index < subsets; ++subset_index)
@@ -66,13 +71,19 @@ void ks::bf::compute(
 
         ks::bf::compute(subset, &profit, &weight);
 
-        if (profit > max_profit && weight < min_weight)
+        if (profit > maxProfit && weight < minWeight)
         {
-            max_profit = profit;
-            min_weight = weight;
+            maxProfit      = profit;
+            minWeight      = weight;
+            solutionSubset = subset;
 
-            SPDLOG_INFO("New max profit = {}, min weight = {}", max_profit, min_weight);
+            SPDLOG_INFO("New max profit = {}, min weight = {}", maxProfit, minWeight);
         }
+    }
+
+    for (auto& item : solutionSubset)
+    {
+        knapsack->addItem(item);
     }
 }
 
@@ -81,14 +92,20 @@ int main(
 {
     if (args != 2)
     {
-        SPDLOG_ERROR("usage: ./createkn01 <output-knapsack-file>");
+        SPDLOG_ERROR("usage: ./bruteforce <output-knapsack-file>");
         return EXIT_FAILURE;
     }
 
     std::filesystem::path    knapsackInputFile{argv[1]};
-    ks::Knapsack::unique_ptr knapsack = ks::KnapsackFileReader::read(knapsackInputFile);
+    ks::Knapsack::shared_ptr knapsack{ks::KnapsackFileReader::read(knapsackInputFile)};
 
     ks::bf::compute(knapsack);
+
+    // clang-format off
+    ks::KnapsackFormattedFileWriter::at(knapsack, 
+                                        knapsackInputFile.parent_path().append("output.txt"),
+                                        ks::KnapsackImpl::BRUTEFORCE);
+    // clang-format on
 
     return EXIT_SUCCESS;
 }

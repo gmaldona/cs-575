@@ -23,6 +23,8 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
+#include <numeric>
+#include <string>
 #include <vector>
 
 #include "spdlog/spdlog.h"
@@ -32,6 +34,14 @@
 namespace ks
 {
 
+    enum KnapsackImpl
+    {
+        INIT,
+        BRUTEFORCE,
+        DP,
+        GREEDY
+    };
+
     /**
      * Meta class to hold the state of the Knapsack and the problem space
      */
@@ -40,7 +50,7 @@ namespace ks
     public:
         typedef uint64_t                  profit_t;
         typedef double                    weight_t;
-        typedef std::unique_ptr<Knapsack> unique_ptr;
+        typedef std::shared_ptr<Knapsack> shared_ptr;
 
         struct Item
         {
@@ -51,18 +61,23 @@ namespace ks
 
         Knapsack()
             : allItems_{}
-            , items_{}
             , knapsackMaxWeight_{}
         {
+            Knapsack({}, 0.0);
         }
 
         Knapsack(
             const std::vector<Knapsack::Item>& allItems, weight_t knapsackWeight)
             : allItems_{allItems}
-            , items_{}
             , knapsackMaxWeight_{knapsackWeight}
         {
-            SPDLOG_INFO("Created 0/1 Knapsack = {{ .items = {}, .weight = {} }}", allItems.size(), knapsackWeight);
+            items_ = std::make_shared<std::vector<Knapsack::Item>>();
+            // clang-format off
+            SPDLOG_INFO("Created 0/1 Knapsack = {{ .items = {}, .weight = {} }}", 
+                std::to_string(allItems_.size()),
+                std::to_string(knapsackMaxWeight_)
+            );
+            // clang-format on
         }
 
         size_t getItemCount()
@@ -106,6 +121,32 @@ namespace ks
             knapsackMaxWeight_ = weight;
         }
 
+        weight_t getItemsWeight()
+        {
+            // clang-format off
+            return std::accumulate(items_->begin(), 
+                                  items_->end(), 
+                                  0, 
+                                 [](const auto sum, const auto & next) {
+                                        return sum + next.weight;
+                                    }
+            );
+            // clang-format on
+        }
+
+        profit_t getItemsProfit()
+        {
+            // clang-format off
+            return std::accumulate(items_->begin(), 
+                                  items_->end(), 
+                                  0, 
+                                 [](const auto sum, const auto & next) {
+                                        return sum + next.price;
+                                    }
+            );
+            // clang-format on
+        }
+
 
     private:
         // All potential items
@@ -121,6 +162,8 @@ namespace ks
 
 #endif // PROG4__KNAPSACK_HH_
 
-std::ostream& operator<<(std::ostream& os, ks::Knapsack knapsank);
+std::ostream& operator<<(std::ostream& os, ks::Knapsack::Item item);
+
+std::ostream& operator<<(std::ostream& os, ks::Knapsack knapsack);
 
 //===== GM =========================================================== 80 ====>>

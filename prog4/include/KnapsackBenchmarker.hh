@@ -36,7 +36,7 @@ namespace ks
     class Benchmarker
     {
     public:
-        Benchmarker(std::function<void(ks::Knapsack::unique_ptr)> callback);
+        Benchmarker(std::function<void(ks::Knapsack::shared_ptr)> callback);
 
         /**
          *

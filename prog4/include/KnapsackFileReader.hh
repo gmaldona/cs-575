@@ -51,7 +51,7 @@ namespace ks
          * @param [in] knapsackFilePath
          * @returns
          */
-        static ks::Knapsack::unique_ptr read(const std::filesystem::path& knapsackFilePath);
+        static ks::Knapsack::shared_ptr read(const std::filesystem::path& knapsackFilePath);
 
     private:
         KnapsackFileReader() = default;

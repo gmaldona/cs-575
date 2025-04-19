@@ -27,7 +27,7 @@
 
 //===== GM =========================================================== 80 ====>>
 
-ks::Knapsack::unique_ptr ks::KnapsackFileReader::read(
+ks::Knapsack::shared_ptr ks::KnapsackFileReader::read(
     const std::filesystem::path& knapsackFilePath)
 {
     std::ifstream knapsackFile;
@@ -107,7 +107,7 @@ ks::Knapsack::unique_ptr ks::KnapsackFileReader::read(
         RET_KS_ERROR;
     }
 
-    return std::make_unique<ks::Knapsack>(items, maxWeight);
+    return std::make_shared<ks::Knapsack>(items, maxWeight);
 }
 
 //===== GM =========================================================== 80 ====>>
