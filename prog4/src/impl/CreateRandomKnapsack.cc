@@ -53,7 +53,7 @@ ks::Knapsack::unique_ptr ks::random::createKnapsack()
     std::uniform_real_distribution<ks::Knapsack::weight_t> weight(ITEM_WEIGHT_LOWER_BOUND, ITEM_WEIGHT_UPPER_BOUND);
     // clang-format on
 
-    std::list<ks::Knapsack::Item> items;
+    std::vector<ks::Knapsack::Item> items;
     for (size_t i = 0; i < knapsackSize(generator); ++i)
     {
         ks::Knapsack::profit_t itemProfit = profit(generator);
