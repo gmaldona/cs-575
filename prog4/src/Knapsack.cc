@@ -22,6 +22,13 @@
 //===== GM =========================================================== 80 ====>>
 
 std::ostream& operator<<(
+    std::ostream& os, ks::Knapsack::Item item)
+{
+    os << item.name << "  .price = " << item.price << "  .weight = " << item.weight;
+    return os;
+}
+
+std::ostream& operator<<(
     std::ostream& os, ks::Knapsack knapsack)
 {
     auto size   = knapsack.getProblemSpace().size();
@@ -34,7 +41,7 @@ std::ostream& operator<<(
     os << "all potential items = [" << std::endl;
     for (auto& item : knapsack.getProblemSpace())
     {
-        os << "   " << item.name << "  .price = " << item.price << "  .weight = " << item.weight << std::endl;
+        os << "   " << item;
     }
     os << "]" << std::endl;
     os << "==== Knapsack Info ====" << std::endl;
