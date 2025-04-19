@@ -20,7 +20,25 @@
 #ifndef PROG4__BRUTEFORCE_KNAPSACK_HH_
 #define PROG4__BRUTEFORCE_KNAPSACK_HH_
 
+#include "Knapsack.hh"
+
 //===== GM =========================================================== 80 ====>>
+
+namespace ks::bf
+{
+
+    /**
+     * @brief Computes a brute force solution on a subset of all items in the
+     * problem space
+     *
+     * @param [in] subset A subset of items within the problem space
+     */
+    void compute(
+        std::vector<ks::Knapsack::Item> subset, ks::Knapsack::profit_t* profit, ks::Knapsack::weight_t* weight);
+
+    void compute(ks::Knapsack::unique_ptr& knapsack);
+
+} // namespace ks::bf
 
 #endif // PROG4__BRUTEFORCE_KNAPSACK_HH_
 
