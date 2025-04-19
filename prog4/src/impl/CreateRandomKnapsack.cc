@@ -21,7 +21,9 @@
 #include <fstream>
 #include <list>
 #include <numeric>
+#include <random>
 
+#include "KnapsackFormattedFileWriter.hh"
 #include "impl/CreateRandomKnapsack.hh"
 #include "spdlog/spdlog.h"
 
@@ -40,30 +42,22 @@
 ks::Knapsack::unique_ptr ks::random::createKnapsack()
 {
     std::random_device randomDeviceSeed;
-    std::mt19937 generator(randomDeviceSeed());
+    std::mt19937       generator(randomDeviceSeed());
 
+    // clang-format off
     // randomizier item count
-    // clang-format off
     std::uniform_int_distribution<size_t> knapsackSize(ITEMS_LOWER_BOUND, ITEMS_UPPER_BOUND);
-    // clang-format on
-    size_t itemCount = knapsackSize(generator);
-
     // randomizier item profit
-    // clang-format off
     std::uniform_int_distribution<ks::Knapsack::profit_t> profit(ITEM_PROFIT_LOWER_BOUND, ITEM_PROFIT_UPPER_BOUND);
-    // clang-format on
-    ks::Knapsack::profit_t itemProfit = profit(generator);
-
     // randomizier item weight
-    // clang-format off
     std::uniform_real_distribution<ks::Knapsack::weight_t> weight(ITEM_WEIGHT_LOWER_BOUND, ITEM_WEIGHT_UPPER_BOUND);
     // clang-format on
-    ks::Knapsack::weight_t itemWeight = weight(generator);
-
 
     std::list<ks::Knapsack::Item> items;
-    for (size_t i = 0; i < itemCount; ++i)
+    for (size_t i = 0; i < knapsackSize(generator); ++i)
     {
+        ks::Knapsack::profit_t itemProfit = profit(generator);
+        ks::Knapsack::weight_t itemWeight = weight(generator);
         // clang-format off
         items.push_back(ks::Knapsack::Item {
             .name = "item" + std::to_string(i),
@@ -87,7 +81,8 @@ ks::Knapsack::unique_ptr ks::random::createKnapsack()
     return std::make_unique<Knapsack>(items, knapsackWeight);
 }
 
-int main(int args, char** argv)
+int main(
+    int args, char** argv)
 {
     if (args != 2)
     {
@@ -95,8 +90,10 @@ int main(int args, char** argv)
         return EXIT_FAILURE;
     }
 
-    std::filesystem::path knapsackOutputFile{argv[1]};
+    std::filesystem::path    knapsackOutputFile{argv[1]};
     ks::Knapsack::unique_ptr knapsack{ks::random::createKnapsack()};
+
+    ks::KnapsackFormattedFileWriter::at(knapsack, knapsackOutputFile);
 }
 
 //===== GM =========================================================== 80 ====>>

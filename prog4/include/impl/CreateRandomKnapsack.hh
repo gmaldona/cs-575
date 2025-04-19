@@ -30,11 +30,11 @@
 #define ITEM_WEIGHT_UPPER_BOUND 20
 
 #include "Knapsack.hh"
-#include <random>
 
 //===== GM =========================================================== 80 ====>>
 
-namespace ks::random {
+namespace ks::random
+{
 
     ks::Knapsack::unique_ptr createKnapsack();
 

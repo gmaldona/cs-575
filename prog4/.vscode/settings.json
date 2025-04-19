@@ -54,6 +54,7 @@
         "span": "cpp",
         "iostream": "cpp",
         "numeric": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "random": "cpp"
     }
 }
