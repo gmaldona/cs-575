@@ -20,18 +20,35 @@
 #ifndef PROG4__KNAPSACK_FILE_READER_HH_
 #define PROG4__KNAPSACK_FILE_READER_HH_
 
-#include "Knapsack.hh"
 #include <filesystem>
 #include <memory>
 
+#include "Knapsack.hh"
+
 //===== GM =========================================================== 80 ====>>
 
-class KnapsackFileReader {
+namespace ks
+{
+    /**
+     *
+     */
+    class KnapsackFileReader
+    {
 
-public:
-    // static bool read(std::filesystem::path knapsackFilePath,
-    // ks::Knapsack::unique_ptr knapsack);
-};
+    public:
+        /**
+         * @brief
+         * 
+         * @param [in] knapsackFilePath 
+         * @returns
+         */
+        static ks::Knapsack::unique_ptr read(const std::filesystem::path& knapsackFilePath);
+
+    private:
+        KnapsackFileReader() = default;
+    };
+
+} // namespace ks
 
 #endif // PROG4__KNAPSACK_FILE_READER_HH_
 
