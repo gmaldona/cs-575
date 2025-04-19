@@ -21,6 +21,7 @@
 #define PROG4__KNAPSACK_HH_
 
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -37,10 +38,9 @@ namespace ks
     class Knapsack
     {
     public:
+        typedef uint64_t                  profit_t;
+        typedef double                    weight_t;
         typedef std::unique_ptr<Knapsack> unique_ptr;
-
-        typedef uint64_t profit_t;
-        typedef double   weight_t;
 
         struct Item
         {
@@ -67,7 +67,7 @@ namespace ks
 
         size_t getItemCount()
         {
-            return items_.size();
+            return items_->size();
         }
 
         /**
@@ -78,7 +78,7 @@ namespace ks
             return allItems_;
         }
 
-        std::vector<Knapsack::Item> getItems()
+        std::shared_ptr<std::vector<Knapsack::Item>> getItems()
         {
             return items_;
         }
@@ -94,10 +94,10 @@ namespace ks
             allItems_ = items;
         }
 
-        void setItems(
-            std::vector<Knapsack::Item> items)
+        void addItem(
+            const ks::Knapsack::Item& item)
         {
-            items_ = items;
+            items_->push_back(item);
         }
 
         void setMaxWeight(
@@ -112,7 +112,7 @@ namespace ks
         std::vector<Knapsack::Item> allItems_;
         // A subset of all the potential items. The items which are allowable
         // in the knapsack
-        std::vector<Knapsack::Item> items_;
+        std::shared_ptr<std::vector<Knapsack::Item>> items_;
         // Weight capacity of knapsack
         weight_t knapsackMaxWeight_;
     };
@@ -120,5 +120,7 @@ namespace ks
 } // namespace ks
 
 #endif // PROG4__KNAPSACK_HH_
+
+std::ostream& operator<<(std::ostream& os, ks::Knapsack knapsank);
 
 //===== GM =========================================================== 80 ====>>
