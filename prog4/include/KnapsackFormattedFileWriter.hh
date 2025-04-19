@@ -51,6 +51,9 @@ namespace ks
          * @returns If knapsack write to file was successful
          */
         static bool at(const Knapsack::unique_ptr& knapsack, const std::filesystem::path& outputPath);
+
+    private:
+        KnapsackFormattedFileWriter() = default;
     };
 } // namespace ks
 
