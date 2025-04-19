@@ -17,6 +17,45 @@
  * SOFTWARE.
  */
 
+#ifndef PROG4__KNAPSACK_BENCHMARKER_HH_
+#define PROG4__KNAPSACK_BENCHMARKER_HH_
+
+#include <functional>
+
+#include "Knapsack.hh"
+#include "spdlog/spdlog.h"
+
 //===== GM =========================================================== 80 ====>>
+
+namespace ks
+{
+
+    /**
+     *
+     */
+    class Benchmarker
+    {
+    public:
+        Benchmarker(std::function<void(ks::Knapsack::unique_ptr)> callback);
+
+        /**
+         *
+         */
+        void start();
+
+        /**
+         *
+         */
+        void mark();
+
+        /**
+         *
+         */
+        void end();
+    };
+
+} // namespace ks
+
+#endif // PROG4__KNAPSACK_BENCHMARKER_HH_
 
 //===== GM =========================================================== 80 ====>>
