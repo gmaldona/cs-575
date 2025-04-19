@@ -21,8 +21,8 @@
 #define PROG4__KNAPSACK_HH_
 
 #include <cstdint>
-#include <list>
 #include <memory>
+#include <vector>
 
 #include "spdlog/spdlog.h"
 
@@ -40,17 +40,26 @@ namespace ks
         typedef std::unique_ptr<Knapsack> unique_ptr;
 
         typedef uint64_t profit_t;
-        typedef double weight_t;
+        typedef double   weight_t;
 
         struct Item
         {
             std::string name;
-            profit_t price;
-            weight_t weight;
+            profit_t    price;
+            weight_t    weight;
         };
 
-        Knapsack(const std::list<Knapsack::Item>& allItems, weight_t knapsackWeight)
+        Knapsack()
+            : allItems_{}
+            , items_{}
+            , knapsackMaxWeight_{}
+        {
+        }
+
+        Knapsack(
+            const std::vector<Knapsack::Item>& allItems, weight_t knapsackWeight)
             : allItems_{allItems}
+            , items_{}
             , knapsackMaxWeight_{knapsackWeight}
         {
             SPDLOG_INFO("Created 0/1 Knapsack = {{ .items = {}, .weight = {} }}", allItems.size(), knapsackWeight);
@@ -64,12 +73,12 @@ namespace ks
         /**
          * @returns all items in the problem space
          */
-        std::list<Knapsack::Item> getProblemSpace()
+        std::vector<Knapsack::Item> getProblemSpace()
         {
             return allItems_;
         }
 
-        std::list<Knapsack::Item> getItems()
+        std::vector<Knapsack::Item> getItems()
         {
             return items_;
         }
@@ -79,12 +88,31 @@ namespace ks
             return knapsackMaxWeight_;
         }
 
+        void setProblemSpace(
+            std::vector<Knapsack::Item> items)
+        {
+            allItems_ = items;
+        }
+
+        void setItems(
+            std::vector<Knapsack::Item> items)
+        {
+            items_ = items;
+        }
+
+        void setMaxWeight(
+            weight_t weight)
+        {
+            knapsackMaxWeight_ = weight;
+        }
+
+
     private:
         // All potential items
-        std::list<Knapsack::Item> allItems_;
+        std::vector<Knapsack::Item> allItems_;
         // A subset of all the potential items. The items which are allowable
         // in the knapsack
-        std::list<Knapsack::Item> items_;
+        std::vector<Knapsack::Item> items_;
         // Weight capacity of knapsack
         weight_t knapsackMaxWeight_;
     };
