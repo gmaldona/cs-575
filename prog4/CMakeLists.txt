@@ -9,7 +9,8 @@ add_compile_options(-Wall -Wextra -O2 -Wunused-parameter)
 
 set(COMMON_SRC
     src/knapsack.cc
-    src/KnapsackFileReader.cc)
+    src/KnapsackFileReader.cc
+    src/KnapsackFormattedFileWriter.cc)
 
 add_executable(createkn01
                ${COMMON_SRC}
