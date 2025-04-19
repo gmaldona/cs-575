@@ -46,9 +46,10 @@ void ks::bf::compute(
     const ks::Knapsack::shared_ptr& knapsack)
 {
     ks::Knapsack::profit_t          maxProfit{0};
-    ks::Knapsack::weight_t          minWeight{std::numeric_limits<ks::Knapsack::weight_t>::max()};
+    ks::Knapsack::weight_t          minWeight{knapsack->getMaxWeight()};
     std::vector<ks::Knapsack::Item> solutionSubset{};
 
+    // Compute subsets to find which subset optimizes the problem
     size_t subsets = std::pow(2, knapsack->getProblemSpace().size()) - 1;
     for (size_t subset_index = 0; subset_index < subsets; ++subset_index)
     {
@@ -57,6 +58,7 @@ void ks::bf::compute(
         {
             if ((subset_index >> item_index) & 1)
             {
+                // std::cout << knapsack->getProblemSpace()[item_index] << std::endl;
                 subset.push_back(knapsack->getProblemSpace()[item_index]);
             }
         }
@@ -70,8 +72,9 @@ void ks::bf::compute(
         ks::Knapsack::weight_t weight{0};
 
         ks::bf::compute(subset, &profit, &weight);
+        // std::cout << "   total profit = " << profit << " total weight = " << weight << std::endl;
 
-        if (profit > maxProfit && weight < minWeight)
+        if (profit > maxProfit && weight < knapsack->getMaxWeight())
         {
             maxProfit      = profit;
             minWeight      = weight;
@@ -79,6 +82,8 @@ void ks::bf::compute(
 
             SPDLOG_INFO("New max profit = {}, min weight = {}", maxProfit, minWeight);
         }
+
+        // std::cout << std::endl;
     }
 
     for (auto& item : solutionSubset)
@@ -92,7 +97,7 @@ int main(
 {
     if (args != 2)
     {
-        SPDLOG_ERROR("usage: ./bruteforce <output-knapsack-file>");
+        SPDLOG_ERROR("usage: ./bruteforce <input-knapsack-file>");
         return EXIT_FAILURE;
     }
 
@@ -103,7 +108,7 @@ int main(
 
     // clang-format off
     ks::KnapsackFormattedFileWriter::at(knapsack, 
-                                        knapsackInputFile.parent_path().append("output.txt"),
+                                        knapsackInputFile.parent_path().append(OUTPUT_FILE),
                                         ks::KnapsackImpl::BRUTEFORCE);
     // clang-format on
 
