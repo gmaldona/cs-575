@@ -20,7 +20,21 @@
 #ifndef PROG4__GREEDY_KNAPSACK_HH_
 #define PROG4__GREEDY_KNAPSACK_HH_
 
+#include "Knapsack.hh"
+
 //===== GM =========================================================== 80 ====>>
+
+namespace ks::greedy
+{
+
+    /**
+     * @brief Finds the subset with the most profit and minimum weight.
+     *
+     * @param [in] knapsack The entire problem space of the knapsack problem
+     */
+    void compute(const ks::Knapsack::shared_ptr& knapsack);
+
+} // namespace ks::greedy
 
 #endif // PROG4__GREEDY_KNAPSACK_HH_
 

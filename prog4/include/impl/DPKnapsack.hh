@@ -20,7 +20,21 @@
 #ifndef PROG4__DP_KNAPSACK_HH_
 #define PROG4__DP_KNAPSACK_HH_
 
+#include "Knapsack.hh"
+
 //===== GM =========================================================== 80 ====>>
+
+namespace ks::dp
+{
+
+    /**
+     * @brief Finds the subset with the most profit and minimum weight.
+     *
+     * @param [in] knapsack The entire problem space of the knapsack problem
+     */
+    void compute(const ks::Knapsack::shared_ptr& knapsack);
+
+} // namespace ks::dp
 
 #endif // PROG4__DP_KNAPSACK_HH_
 
