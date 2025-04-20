@@ -20,10 +20,10 @@
 #ifndef PROG4__KNAPSACK_FORMATTED_FILE_WRITER_HH_
 #define PROG4__KNAPSACK_FORMATTED_FILE_WRITER_HH_
 
-#define OUTPUT_FILE "output.txt"
-
 #include <filesystem>
 #include <string>
+
+#define OUTPUT_FILE(x) "output" + std::to_string(x) + ".txt"
 
 #include "Knapsack.hh"
 
@@ -41,11 +41,27 @@ namespace ks
 
     /**
      * @brief
-     * 
+     *
      * @param [in] knapsack Pointer to knapsack to format into a string
      * @returns a formatted string containing the bruteforce solution to the knapsack problem space
      */
     std::string formatBruteforceKnapsack(const Knapsack::shared_ptr& knapsack);
+
+    /**
+     * @brief
+     *
+     * @param [in] knapsack Pointer to knapsack to format into a string
+     * @returns a formatted string containing the dynamic programming solution to the knapsack problem space
+     */
+    std::string formatDPKnapsack(const Knapsack::shared_ptr& knapsack);
+
+    /**
+     * @brief
+     *
+     * @param [in] knapsack Pointer to knapsack to format into a string
+     * @returns a formatted string containing the greedy solution to the knapsack problem space
+     */
+    std::string formatGreedyKnapsack(const Knapsack::shared_ptr& knapsack);
 
     class KnapsackFormattedFileWriter
     {

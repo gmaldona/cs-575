@@ -20,12 +20,73 @@
 #ifndef PROG4__GREEDY_KNAPSACK_HH_
 #define PROG4__GREEDY_KNAPSACK_HH_
 
+#include <functional>
+#include <initializer_list>
+#include <list>
+
 #include "Knapsack.hh"
+#include "spdlog/spdlog.h"
 
 //===== GM =========================================================== 80 ====>>
 
 namespace ks::greedy
 {
+
+    /**
+     * Benefit calculation for the \ns ks::Knapsack::Item as specified Chapter 12. Slide 15.
+     */
+    struct IBenefit
+    {
+        ks::Knapsack::Item item;
+        double             benefit;
+
+        IBenefit(
+            const ks::Knapsack::Item& other)
+        {
+            item = other;
+            // Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
+            benefit = item.price / item.weight;
+        }
+    };
+
+    /**
+     * Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
+     *
+     * @brief Greedy4 algorithm as specified Chapter 12. Slide 15.
+     *
+     * @param [in] knapsack The entire problem space of the knapsack problem
+     *
+     * @returns The greedy solution set to the knapsack problem space.
+     */
+    std::list<ks::Knapsack::Item> Greedy4(const ks::Knapsack::shared_ptr& knapsack);
+
+    /**
+     * Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
+     *
+     * @brief Greedy4 algorithm as specified Chapter 12. Slide 20.
+     *
+     * @param [in] knapsack The entire problem space of the knapsack problem
+     *
+     * @returns The greedy solution set to the knapsack problem space.
+     */
+    std::list<ks::Knapsack::Item> MaxB(const ks::Knapsack::shared_ptr& knapsack);
+
+    /**
+     * Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
+     *
+     * @brief The approximation algorithm is a max over Greedy4 or MaxB
+     *
+     * The approximation algorithm selects, either the solution to Greedy4, or
+     * only the item with benefit MaxB depending on max{BGreedy4, maxB }.
+     *
+     * @param [in] functors A list of implementations of a greedy solution to the knapsack problem
+     * @param [in] knapsack The entire problem space of the knapsack problem
+     *
+     * @returns The greedy solution set to the knapsack problem space.
+     */
+    std::list<Knapsack::Item> max(
+        const std::initializer_list<std::function<std::list<Knapsack::Item>(const Knapsack::shared_ptr&)>>& functors,
+        const Knapsack::shared_ptr&                                                                         knapsack);
 
     /**
      * @brief Finds the subset with the most profit and minimum weight.
@@ -35,6 +96,8 @@ namespace ks::greedy
     void compute(const ks::Knapsack::shared_ptr& knapsack);
 
 } // namespace ks::greedy
+
+std::ostream& operator<<(std::ostream& os, ks::greedy::IBenefit item);
 
 #endif // PROG4__GREEDY_KNAPSACK_HH_
 
