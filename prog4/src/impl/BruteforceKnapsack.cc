@@ -122,8 +122,10 @@ int main(
     // clang-format on
 
     // clang-format off
-ks::KnapsackFormattedFileWriter::at(knapsack, 
-    knapsackInputFile.parent_path().append(OUTPUT_FILE),
+    ks::KnapsackFormattedFileWriter::at(
+        knapsack, 
+        knapsackInputFile.parent_path().append(OUTPUT_FILE(1)
+    ),
     ks::KnapsackImpl::BRUTEFORCE);
     // clang-format on
 
