@@ -24,7 +24,7 @@
 std::ostream& operator<<(
     std::ostream& os, ks::Knapsack::Item item)
 {
-    os << item.name << "  .price = " << item.price << "  .weight = " << item.weight;
+    os << item.name << "\t.price = " << item.price << "\t.weight = " << item.weight;
     return os;
 }
 
