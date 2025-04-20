@@ -83,6 +83,8 @@ std::vector<ks::Knapsack::Item> ks::greedy::MaxB(
         if (item.price > profit and item.weight <= knapsack->getMaxWeight())
         {
             solution = item;
+            profit   = item.price;
+            SPDLOG_INFO(solution.price);
         }
     }
     return std::vector<ks::Knapsack::Item>{solution};
@@ -148,6 +150,20 @@ int main(
         ks::greedy::compute(knapsack);
     #endif
     // clang-format on
+
+    // clang-format off
+    std::cout << std::endl;
+    std::cout << "Greedy Knapsack Solution = {" 
+              << " .profit = " << std::to_string(knapsack->computeProfit()) 
+              << " .weight = " << std::to_string(knapsack->getItemsWeight()) 
+              << " } " << std::endl;
+    // clang-format on
+
+    for (auto& item : *knapsack->getItems())
+    {
+        std::cout << item << std::endl;
+    }
+    std::cout << std::endl;
 
     // clang-format off
     ks::KnapsackFormattedFileWriter::at(
