@@ -7,6 +7,7 @@
       "request": "launch",
       "program": "${command:cmake.launchTargetPath}",
       "args": [
+        "-DBENCHMARK=1",
         "${command:cmake.getLaunchTargetDirectory}/tests/program4_n5_knapsack01.txt"
       ],
       "cwd": "${command:cmake.getLaunchTargetDirectory}",
