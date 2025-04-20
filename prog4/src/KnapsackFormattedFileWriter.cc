@@ -55,6 +55,11 @@ namespace ks
         std::string formatted = std::to_string(knapsack->getItems()->size()) + " "
                               + std::to_string(knapsack->getItemsProfit()) + " "
                               + std::to_string(knapsack->getItemsWeight()) + "\n\n";
+
+        std::sort(knapsack->getItems()->begin(), knapsack->getItems()->end(),
+                    [](const ks::Knapsack::Item& a, const ks::Knapsack::Item& b) {
+                        return a.name < b.name;
+                    });
         // clang-format on
 
         for (auto& item : *(knapsack->getItems()))
