@@ -122,6 +122,20 @@ int main(
     // clang-format on
 
     // clang-format off
+    std::cout << std::endl;
+    std::cout << "Bruteforce Knapsack Solution = {" 
+              << " .profit = " << std::to_string(knapsack->computeProfit()) 
+              << " .weight = " << std::to_string(knapsack->getItemsWeight()) 
+              << " } " << std::endl;
+    // clang-format on
+
+    for (auto& item : *knapsack->getItems())
+    {
+        std::cout << item << std::endl;
+    }
+    std::cout << std::endl;
+
+    // clang-format off
     ks::KnapsackFormattedFileWriter::at(
         knapsack, 
         knapsackInputFile.parent_path().append(OUTPUT_FILE(1)
