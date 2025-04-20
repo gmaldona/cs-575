@@ -17,6 +17,34 @@
  * SOFTWARE.
  */
 
+#include "KnapsackBenchmarker.hh"
+#include "spdlog/spdlog.h"
+
 //===== GM =========================================================== 80 ====>>
+
+ks::Benchmarker::Benchmarker(
+    std::string name)
+    : name_{name}
+    , start_{}
+{
+}
+
+void ks::Benchmarker::start()
+{
+    start_ = std::chrono::high_resolution_clock::now();
+    SPDLOG_INFO("Created a Benchmark start point: {}", name_);
+}
+
+std::chrono::duration<double> ks::Benchmarker::checkpoint()
+{
+    return std::chrono::high_resolution_clock::now() - start_;
+}
+
+void ks::Benchmarker::end()
+{
+    SPDLOG_INFO("{} total benchmark runtime: {}", name_, std::to_string(checkpoint().count()));
+    ks::Benchmarker::~Benchmarker();
+}
+
 
 //===== GM =========================================================== 80 ====>>

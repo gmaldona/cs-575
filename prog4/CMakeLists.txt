@@ -10,7 +10,13 @@ add_compile_options(-Wall -Wextra -O2 -Wunused-parameter)
 set(COMMON_SRC
     src/knapsack.cc
     src/KnapsackFileReader.cc
+    src/KnapsackBenchmarker.cc
     src/KnapsackFormattedFileWriter.cc)
+
+if(BENCHMARK)
+    add_definitions(-DBENCHMARK)
+    message("Benchmark: Enabled")
+endif()
 
 add_executable(createkn01
                ${COMMON_SRC}

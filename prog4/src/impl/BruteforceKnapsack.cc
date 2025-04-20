@@ -30,6 +30,10 @@
 #include "impl/BruteforceKnapsack.hh"
 #include "spdlog/spdlog.h"
 
+#ifdef BENCHMARK
+#include "KnapsackBenchmarker.hh"
+#endif
+
 //===== GM =========================================================== 80 ====>>
 
 void ks::bf::compute(
@@ -80,7 +84,7 @@ void ks::bf::compute(
             minWeight      = weight;
             solutionSubset = subset;
 
-            SPDLOG_INFO("New max profit = {}, min weight = {}", maxProfit, minWeight);
+            SPDLOG_INFO("New max profit = {}, weight = {}", maxProfit, minWeight);
         }
 
         // std::cout << std::endl;
@@ -104,12 +108,23 @@ int main(
     std::filesystem::path    knapsackInputFile{argv[1]};
     ks::Knapsack::shared_ptr knapsack{ks::KnapsackFileReader::read(knapsackInputFile)};
 
-    ks::bf::compute(knapsack);
+    // clang-format off
+    // Benchmarker usable for each implementation of KS
+    #ifdef BENCHMARK
+        ks::Benchmarker benchmarker{"ks::bf::compute"};
+        
+        benchmarker.start();
+            ks::bf::compute(knapsack); 
+        benchmarker.end();
+    #else
+        ks::bf::compute(knapsack);
+    #endif
+    // clang-format on
 
     // clang-format off
-    ks::KnapsackFormattedFileWriter::at(knapsack, 
-                                        knapsackInputFile.parent_path().append(OUTPUT_FILE),
-                                        ks::KnapsackImpl::BRUTEFORCE);
+ks::KnapsackFormattedFileWriter::at(knapsack, 
+    knapsackInputFile.parent_path().append(OUTPUT_FILE),
+    ks::KnapsackImpl::BRUTEFORCE);
     // clang-format on
 
     return EXIT_SUCCESS;

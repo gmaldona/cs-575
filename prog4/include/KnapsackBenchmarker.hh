@@ -20,7 +20,9 @@
 #ifndef PROG4__KNAPSACK_BENCHMARKER_HH_
 #define PROG4__KNAPSACK_BENCHMARKER_HH_
 
+#include <chrono>
 #include <functional>
+#include <string>
 
 #include "Knapsack.hh"
 #include "spdlog/spdlog.h"
@@ -36,22 +38,33 @@ namespace ks
     class Benchmarker
     {
     public:
-        Benchmarker(std::function<void(ks::Knapsack::shared_ptr)> callback);
+        /**
+         * @brief Creates a benchmark timer capable of logging several benchmark times
+         *
+         * @param [in] name Benchmark name
+         */
+        Benchmarker(std::string name);
+
+        ~Benchmarker() = default;
 
         /**
-         *
+         * @brief Starts the benchmark timer
          */
         void start();
 
         /**
-         *
+         * @returns A time lapse between now and the start of the benchmark
          */
-        void mark();
+        std::chrono::duration<double> checkpoint();
 
         /**
-         *
+         * @brief Logs out final benchmark time and destroys benchmarker
          */
         void end();
+
+    private:
+        std::string                                                 name_;
+        std::chrono::time_point<std::chrono::high_resolution_clock> start_;
     };
 
 } // namespace ks
