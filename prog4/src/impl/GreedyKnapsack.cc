@@ -17,9 +17,11 @@
  * SOFTWARE.
  */
 
+#include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 
 #include "Knapsack.hh"
 #include "KnapsackFileReader.hh"
@@ -36,33 +38,33 @@
 std::list<ks::Knapsack::Item> ks::greedy::Greedy4(
     const ks::Knapsack::shared_ptr& knapsack)
 {
-    SPDLOG_INFO("Computing Greedy4(knapsack)...");
-
-    std::list<ks::greedy::IBenefit> itemBenefits;
+    std::vector<ks::greedy::IBenefit> itemBenefits;
     for (auto& item : knapsack->getProblemSpace())
     {
         ks::greedy::IBenefit itemBenefit{item};
         itemBenefits.push_back(itemBenefit);
     }
 
-    ks::Knapsack::profit_t        profit{0};
     ks::Knapsack::weight_t        weight{0};
     std::list<ks::Knapsack::Item> solution{};
+
+    // clang-format off
+    // sort based on benefit
+    std::sort(itemBenefits.begin(), itemBenefits.end(),
+        [](const ks::greedy::IBenefit& a, const ks::greedy::IBenefit& b) { 
+            return a.benefit > b.benefit;
+        });
+    // clang-format on
+
     for (auto& benefit : itemBenefits)
     {
-        if (weight + benefit.item.weight <= knapsack->getMaxWeight())
+        // the greedy computation
+        if (benefit.item.weight + weight <= knapsack->getMaxWeight())
         {
-            profit = profit + benefit.item.price;
             weight = weight + benefit.item.weight;
             solution.push_front(benefit.item);
         }
-        else if (benefit.item.price >= profit && benefit.item.weight < weight)
-        {
-            profit = benefit.item.price;
-            weight = benefit.item.weight;
-            solution.clear();
-            solution.push_front(benefit.item);
-        }
+        // the greedy computation
     }
 
     return solution;
