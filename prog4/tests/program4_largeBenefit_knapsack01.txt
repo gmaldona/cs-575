@@ -1,0 +1,6 @@
+5 48
+item1 14 3
+item2 13 5
+item3 13 8
+item4 72 48
+item5 11 33
