@@ -18,10 +18,12 @@
  */
 
 #include <filesystem>
+#include <iostream>
 #include <stdlib.h>
 
 #include "Knapsack.hh"
 #include "KnapsackFileReader.hh"
+#include "KnapsackFormattedFileWriter.hh"
 #include "impl/GreedyKnapsack.hh"
 #include "spdlog/spdlog.h"
 
@@ -31,9 +33,73 @@
 
 //===== GM =========================================================== 80 ====>>
 
-void ks::greedy::compute(
+std::list<ks::Knapsack::Item> ks::greedy::Greedy4(
+    const ks::Knapsack::shared_ptr& knapsack)
+{
+    SPDLOG_INFO("Computing Greedy4(knapsack)...");
+
+    std::list<ks::greedy::IBenefit> itemBenefits;
+    for (auto& item : knapsack->getProblemSpace())
+    {
+        ks::greedy::IBenefit itemBenefit{item};
+        itemBenefits.push_back(itemBenefit);
+    }
+
+    ks::Knapsack::profit_t        profit{0};
+    ks::Knapsack::weight_t        weight{0};
+    std::list<ks::Knapsack::Item> solution{};
+    for (auto& benefit : itemBenefits)
+    {
+        if (weight + benefit.item.weight <= knapsack->getMaxWeight())
+        {
+            profit = profit + benefit.item.price;
+            weight = weight + benefit.item.weight;
+            solution.push_front(benefit.item);
+        }
+        else if (benefit.item.price >= profit && benefit.item.weight < weight)
+        {
+            profit = benefit.item.price;
+            weight = benefit.item.weight;
+            solution.clear();
+            solution.push_front(benefit.item);
+        }
+    }
+
+    return solution;
+}
+
+std::list<ks::Knapsack::Item> ks::greedy::MaxB(
     const ks::Knapsack::shared_ptr&)
 {
+    return std::list<ks::Knapsack::Item>{};
+}
+
+std::list<ks::Knapsack::Item> ks::greedy::max(
+    const std::initializer_list<std::function<std::list<ks::Knapsack::Item>(const ks::Knapsack::shared_ptr&)>>&
+                                    functors,
+    const ks::Knapsack::shared_ptr& knapsack)
+{
+    std::list<ks::Knapsack::Item> solution;
+
+    // iterate over each greedy implementation and pick the best.
+    for (auto& functor : functors)
+    {
+        functor(knapsack);
+    }
+
+    return solution;
+}
+
+void ks::greedy::compute(
+    const ks::Knapsack::shared_ptr& knapsack)
+{
+    std::list<ks::Knapsack::Item> solutionSet = ks::greedy::Greedy4(knapsack);
+    // iterate over each greedy implementation and pick the best.
+    // ks::greedy::max({ks::greedy::Greedy4, ks::greedy::MaxB}, knapsack);
+    for (auto it = solutionSet.rbegin(); it != solutionSet.rend(); ++it)
+    {
+        knapsack->addItem(*it);
+    }
 }
 
 int main(
@@ -61,7 +127,27 @@ int main(
     #endif
     // clang-format on
 
+    // clang-format off
+    ks::KnapsackFormattedFileWriter::at(
+        knapsack, 
+        knapsackInputFile.parent_path().append(OUTPUT_FILE(3)
+    ),
+    ks::KnapsackImpl::GREEDY);
+    // clang-format on
+
     return EXIT_SUCCESS;
+}
+
+std::ostream& operator<<(
+    std::ostream& os, ks::greedy::IBenefit item)
+{
+    // clang-format off
+    os << item.item.name 
+       << "\t.price = " << item.item.price 
+       << "\t.weight = " << item.item.weight
+       << "\t.benefit = " << item.benefit;
+    // clang-format on   
+    return os;
 }
 
 //===== GM =========================================================== 80 ====>>
