@@ -22,21 +22,44 @@
 
 #include "Knapsack.hh"
 #include "KnapsackFileReader.hh"
+#include "impl/DPKnapsack.hh"
 #include "spdlog/spdlog.h"
 
+#ifdef BENCHMARK
+#include "KnapsackBenchmarker.hh"
+#endif
+
 //===== GM =========================================================== 80 ====>>
+
+void ks::dp::compute(
+    const ks::Knapsack::shared_ptr&)
+{
+}
 
 int main(
     int args, char** argv)
 {
     if (args != 2)
     {
-        SPDLOG_ERROR("usage: ./bruteforce <output-knapsack-file>");
+        SPDLOG_ERROR("usage: ./dynpro <input-knapsack-file>");
         return EXIT_FAILURE;
     }
 
     std::filesystem::path    knapsackInputFile{argv[1]};
     ks::Knapsack::shared_ptr knapsack = ks::KnapsackFileReader::read(knapsackInputFile);
+
+    // clang-format off
+    // Benchmarker usable for each implementation of KS
+    #ifdef BENCHMARK
+        ks::Benchmarker benchmarker{"ks::dp::compute"};
+        
+        benchmarker.start();
+            ks::dp::compute(knapsack); 
+        benchmarker.end();
+    #else
+        ks::dp::compute(knapsack);
+    #endif
+    // clang-format on
 
     return EXIT_SUCCESS;
 }
