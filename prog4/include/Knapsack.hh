@@ -121,6 +121,25 @@ namespace ks
             knapsackMaxWeight_ = weight;
         }
 
+        static profit_t computeProfit(
+            const std::vector<Knapsack::Item>& items)
+        {
+            // clang-format off
+            return std::accumulate(items.begin(), 
+                                   items.end(), 
+                                   0, 
+                                   [](const auto sum, const auto & next) {
+                                        return sum + next.price;
+                                    }
+            );
+            // clang-format on
+        }
+
+        profit_t computeProfit()
+        {
+            return ks::Knapsack::computeProfit(*items_);
+        }
+
         weight_t getItemsWeight()
         {
             // clang-format off
