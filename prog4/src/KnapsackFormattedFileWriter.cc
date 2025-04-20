@@ -70,6 +70,12 @@ namespace ks
         return formatted;
     }
 
+    std::string formatDPKnapsack(
+        const Knapsack::shared_ptr&)
+    {
+        return "";
+    }
+
     bool ks::KnapsackFormattedFileWriter::at(
         const Knapsack::shared_ptr& knapsack, const std::filesystem::path& outputPath, ks::KnapsackImpl impl)
     {
@@ -87,12 +93,12 @@ namespace ks
         case ks::KnapsackImpl::INIT:
             outputFile << formatInitKnapsack(knapsack);
             break;
+        case ks::KnapsackImpl::GREEDY:
         case ks::KnapsackImpl::BRUTEFORCE:
             outputFile << formatBruteforceKnapsack(knapsack);
             break;
         case ks::KnapsackImpl::DP:
-            break;
-        case ks::KnapsackImpl::GREEDY:
+            outputFile << formatDPKnapsack(knapsack);
             break;
         default:
             SPDLOG_WARN("Internal implementation choice error.");
