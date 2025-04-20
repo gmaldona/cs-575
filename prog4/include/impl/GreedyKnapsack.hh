@@ -58,7 +58,7 @@ namespace ks::greedy
      *
      * @returns The greedy solution set to the knapsack problem space.
      */
-    std::list<ks::Knapsack::Item> Greedy4(const ks::Knapsack::shared_ptr& knapsack);
+    std::vector<ks::Knapsack::Item> Greedy4(const ks::Knapsack::shared_ptr& knapsack);
 
     /**
      * Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
@@ -69,7 +69,7 @@ namespace ks::greedy
      *
      * @returns The greedy solution set to the knapsack problem space.
      */
-    std::list<ks::Knapsack::Item> MaxB(const ks::Knapsack::shared_ptr& knapsack);
+    std::vector<ks::Knapsack::Item> MaxB(const ks::Knapsack::shared_ptr& knapsack);
 
     /**
      * Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
@@ -84,9 +84,9 @@ namespace ks::greedy
      *
      * @returns The greedy solution set to the knapsack problem space.
      */
-    std::list<Knapsack::Item> max(
-        const std::initializer_list<std::function<std::list<Knapsack::Item>(const Knapsack::shared_ptr&)>>& functors,
-        const Knapsack::shared_ptr&                                                                         knapsack);
+    std::vector<Knapsack::Item> max(
+        const std::initializer_list<std::function<std::vector<Knapsack::Item>(const Knapsack::shared_ptr&)>>& functors,
+        const Knapsack::shared_ptr&                                                                           knapsack);
 
     /**
      * @brief Finds the subset with the most profit and minimum weight.
