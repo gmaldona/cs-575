@@ -35,9 +35,10 @@
 
 //===== GM =========================================================== 80 ====>>
 
-std::list<ks::Knapsack::Item> ks::greedy::Greedy4(
+std::vector<ks::Knapsack::Item> ks::greedy::Greedy4(
     const ks::Knapsack::shared_ptr& knapsack)
 {
+    SPDLOG_INFO("Computing Greedy4(knapsack)");
     std::vector<ks::greedy::IBenefit> itemBenefits;
     for (auto& item : knapsack->getProblemSpace())
     {
@@ -45,8 +46,8 @@ std::list<ks::Knapsack::Item> ks::greedy::Greedy4(
         itemBenefits.push_back(itemBenefit);
     }
 
-    ks::Knapsack::weight_t        weight{0};
-    std::list<ks::Knapsack::Item> solution{};
+    ks::Knapsack::weight_t          weight{0};
+    std::vector<ks::Knapsack::Item> solution{};
 
     // clang-format off
     // sort based on benefit
@@ -62,7 +63,7 @@ std::list<ks::Knapsack::Item> ks::greedy::Greedy4(
         if (benefit.item.weight + weight <= knapsack->getMaxWeight())
         {
             weight = weight + benefit.item.weight;
-            solution.push_front(benefit.item);
+            solution.push_back(benefit.item);
         }
         // the greedy computation
     }
@@ -70,23 +71,42 @@ std::list<ks::Knapsack::Item> ks::greedy::Greedy4(
     return solution;
 }
 
-std::list<ks::Knapsack::Item> ks::greedy::MaxB(
-    const ks::Knapsack::shared_ptr&)
+std::vector<ks::Knapsack::Item> ks::greedy::MaxB(
+    const ks::Knapsack::shared_ptr& knapsack)
 {
-    return std::list<ks::Knapsack::Item>{};
+    SPDLOG_INFO("Computing MaxB(knapsack)");
+    ks::Knapsack::profit_t profit{0};
+    ks::Knapsack::Item     solution;
+
+    for (auto& item : knapsack->getProblemSpace())
+    {
+        if (item.price > profit and item.weight <= knapsack->getMaxWeight())
+        {
+            solution = item;
+        }
+    }
+    return std::vector<ks::Knapsack::Item>{solution};
 }
 
-std::list<ks::Knapsack::Item> ks::greedy::max(
-    const std::initializer_list<std::function<std::list<ks::Knapsack::Item>(const ks::Knapsack::shared_ptr&)>>&
+std::vector<ks::Knapsack::Item> ks::greedy::max(
+    const std::initializer_list<std::function<std::vector<ks::Knapsack::Item>(const ks::Knapsack::shared_ptr&)>>&
                                     functors,
     const ks::Knapsack::shared_ptr& knapsack)
 {
-    std::list<ks::Knapsack::Item> solution;
+    ks::Knapsack::profit_t          maxProfit{0};
+    std::vector<ks::Knapsack::Item> solution{0};
 
     // iterate over each greedy implementation and pick the best.
     for (auto& functor : functors)
     {
-        functor(knapsack);
+        auto items  = functor(knapsack);
+        auto profit = ks::Knapsack::computeProfit(items);
+        if (profit > maxProfit)
+        {
+            SPDLOG_INFO("New solution found");
+            maxProfit = profit;
+            solution  = items;
+        }
     }
 
     return solution;
@@ -95,10 +115,10 @@ std::list<ks::Knapsack::Item> ks::greedy::max(
 void ks::greedy::compute(
     const ks::Knapsack::shared_ptr& knapsack)
 {
-    std::list<ks::Knapsack::Item> solutionSet = ks::greedy::Greedy4(knapsack);
+    std::vector<ks::Knapsack::Item> solutionSet;
     // iterate over each greedy implementation and pick the best.
-    // ks::greedy::max({ks::greedy::Greedy4, ks::greedy::MaxB}, knapsack);
-    for (auto it = solutionSet.rbegin(); it != solutionSet.rend(); ++it)
+    solutionSet = ks::greedy::max({ks::greedy::Greedy4, ks::greedy::MaxB}, knapsack);
+    for (auto it = solutionSet.begin(); it != solutionSet.end(); ++it)
     {
         knapsack->addItem(*it);
     }
