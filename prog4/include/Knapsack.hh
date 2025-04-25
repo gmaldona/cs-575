@@ -53,7 +53,7 @@ namespace ks
     class Knapsack
     {
     public:
-        typedef uint64_t                  profit_t;
+        typedef int64_t                   profit_t;
         typedef double                    weight_t;
         typedef std::shared_ptr<Knapsack> shared_ptr;
 

@@ -21,6 +21,7 @@
 #define PROG4__KNAPSACK_FORMATTED_FILE_WRITER_HH_
 
 #include <filesystem>
+#include <memory>
 #include <string>
 
 #define OUTPUT_FILE(x) "output" + std::to_string(x) + ".txt"
@@ -45,15 +46,17 @@ namespace ks
      * @param [in] knapsack Pointer to knapsack to format into a string
      * @returns a formatted string containing the bruteforce solution to the knapsack problem space
      */
-    std::string formatBruteforceKnapsack(const Knapsack::shared_ptr& knapsack);
+    // std::string formatBruteforceKnapsack(const Knapsack::shared_ptr& knapsack);
 
     /**
      * @brief
      *
      * @param [in] knapsack Pointer to knapsack to format into a string
-     * @returns a formatted string containing the dynamic programming solution to the knapsack problem space
+     * @param [in] entriesOutputPath Path to entries table writen to disk
+     * @param [in] dpTable Populated dynamic programming table
      */
-    std::string formatDPKnapsack(const Knapsack::shared_ptr& knapsack);
+    void formatDPKnapsack(const Knapsack::shared_ptr& knapsack, const std::filesystem::path& entriesOutputPath,
+        std::shared_ptr<std::vector<std::shared_ptr<std::vector<int64_t>>>> dpTable);
 
     /**
      * @brief
@@ -61,7 +64,7 @@ namespace ks
      * @param [in] knapsack Pointer to knapsack to format into a string
      * @returns a formatted string containing the greedy solution to the knapsack problem space
      */
-    std::string formatGreedyKnapsack(const Knapsack::shared_ptr& knapsack);
+    // std::string formatGreedyKnapsack(const Knapsack::shared_ptr& knapsack);
 
     class KnapsackFormattedFileWriter
     {
@@ -79,7 +82,7 @@ namespace ks
             ks::KnapsackImpl impl = ks::KnapsackImpl::INIT);
 
     private:
-        KnapsackFormattedFileWriter() = default;
+        KnapsackFormattedFileWriter()  = default;
         ~KnapsackFormattedFileWriter() = default;
     };
 } // namespace ks

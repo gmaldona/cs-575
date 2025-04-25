@@ -20,6 +20,8 @@
 #ifndef PROG4__DP_KNAPSACK_HH_
 #define PROG4__DP_KNAPSACK_HH_
 
+#include <iostream>
+#include <utility>
 #include <vector>
 
 #include "Knapsack.hh"
@@ -32,19 +34,51 @@
 
 namespace ks::dp
 {
+    /// pointer types for components of the dynamic programming table ///
+    typedef std::vector<int64_t>       __DPCol_t;
+    typedef std::shared_ptr<__DPCol_t> DPCol_t;
 
-    typedef std::vector<ks::Knapsack::Item>              DPCol_t;
-    typedef std::vector<std::vector<ks::Knapsack::Item>> DPRow_t;
-    typedef DPRow_t                                      DPTable_t;
+    typedef std::vector<DPCol_t>       __DPRow_t;
+    typedef std::shared_ptr<__DPRow_t> DPRow_t;
+
+    typedef DPRow_t DPTable_t;
+
+    typedef int64_t                     coord_t;
+    typedef std::pair<coord_t, coord_t> point_t;
+
+    ks::Knapsack::profit_t computeDPEntry(
+        const ks::Knapsack::shared_ptr& knapsack, const DPTable_t& dpTable, point_t&& point);
+
+    /**
+     *
+     */
+    // clang-format off
+    void rcompute(const ks::Knapsack::shared_ptr& knapsack, 
+                  const DPTable_t& dpTable, 
+                  point_t&& point,
+                  size_t depth
+        );
+    // clang-format on
 
     /**
      * @brief Finds the subset with the most profit and minimum weight.
      *
      * @param [in] knapsack The entire problem space of the knapsack problem
+     * @returns computed dynamic programming table
      */
-    void compute(const ks::Knapsack::shared_ptr& knapsack);
+    ks::dp::DPTable_t compute(const ks::Knapsack::shared_ptr& knapsack);
 
 } // namespace ks::dp
+
+/**
+ * @brief Pretty print \ns ks::dp::point_t
+ */
+std::ostream& operator<<(
+    std::ostream& os, const ks::dp::point_t& point)
+{
+    os << "[" << std::to_string(point.first) << ", " << std::to_string(point.second) << "]";
+    return os;
+}
 
 #endif // PROG4__DP_KNAPSACK_HH_
 

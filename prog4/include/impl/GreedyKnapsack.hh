@@ -22,6 +22,7 @@
 
 #include <functional>
 #include <initializer_list>
+#include <iostream>
 #include <list>
 
 #include "Knapsack.hh"

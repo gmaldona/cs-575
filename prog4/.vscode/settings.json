@@ -57,6 +57,7 @@
         "fstream": "cpp",
         "random": "cpp",
         "filesystem": "cpp",
-        "__config_site": "cpp"
+        "__config_site": "cpp",
+        "utility": "cpp"
     }
 }
