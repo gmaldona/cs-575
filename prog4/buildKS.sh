@@ -15,6 +15,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+if [ "$1" == 'clean' ]; then
+    rm -rf build/
+    exit 0
+fi
+
 if [ $(uname) == Linux ]; then
     cores=$(nproc --all)
 else
@@ -25,4 +30,8 @@ mkdir -p build && pushd build >/dev/null
     cmake .. && make -j"${cores}"
 popd > /dev/null
 
-find build -maxdepth 1 -type f -executable
+if [ $(uname) == Linux ]; then
+    find build -maxdepth 1 -type f -executable
+else
+    find build -maxdepth 1 -type f -perm +111
+fi 
