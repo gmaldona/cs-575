@@ -80,6 +80,7 @@ namespace ks
 
     private:
         KnapsackFormattedFileWriter() = default;
+        ~KnapsackFormattedFileWriter() = default;
     };
 } // namespace ks
 

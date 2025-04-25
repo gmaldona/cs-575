@@ -24,6 +24,10 @@
 
 //===== GM =========================================================== 80 ====>>
 
+/**
+ * [10%] Implement the brute force method to solve the 0/1 knapsack problem.
+ */
+
 namespace ks::bf
 {
 

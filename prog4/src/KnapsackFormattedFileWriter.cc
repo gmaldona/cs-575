@@ -48,13 +48,13 @@ namespace ks
         return formatted;
     }
 
-    std::string formatBruteforceKnapsack(
+    std::string formatKnapsackSolution(
         const Knapsack::shared_ptr& knapsack)
     {
         // clang-format off
         std::string formatted = std::to_string(knapsack->getItems()->size()) + " "
-                              + std::to_string(knapsack->getItemsProfit()) + " "
-                              + std::to_string(knapsack->getItemsWeight()) + "\n\n";
+                              + std::to_string(knapsack->getItemsProfit())   + " "
+                              + std::to_string(knapsack->getItemsWeight())   + "\n\n";
 
         std::sort(knapsack->getItems()->begin(), knapsack->getItems()->end(),
                     [](const ks::Knapsack::Item& a, const ks::Knapsack::Item& b) {
@@ -98,18 +98,16 @@ namespace ks
         case ks::KnapsackImpl::INIT:
             outputFile << formatInitKnapsack(knapsack);
             break;
-        case ks::KnapsackImpl::GREEDY:
-        case ks::KnapsackImpl::BRUTEFORCE:
-            outputFile << formatBruteforceKnapsack(knapsack);
-            break;
         case ks::KnapsackImpl::DP:
             outputFile << formatDPKnapsack(knapsack);
+        case ks::KnapsackImpl::GREEDY:
+        case ks::KnapsackImpl::BRUTEFORCE:
+            outputFile << formatKnapsackSolution(knapsack);
             break;
         default:
-            SPDLOG_WARN("Internal implementation choice error.");
+            SPDLOG_WARN("Failed to write knapsack solution on disk.");
             return false;
         }
-
 
         SPDLOG_INFO("Writing to: {}", outputPath.c_str());
         return true;

@@ -84,9 +84,8 @@ void ks::bf::compute(
             minWeight      = weight;
             solutionSubset = subset;
 
-            SPDLOG_INFO("New max profit = {}, weight = {}", maxProfit, minWeight);
+            SPDLOG_INFO("Found subset with new max profit = {}, weight = {}", maxProfit, minWeight);
         }
-
         // std::cout << std::endl;
     }
 
@@ -108,6 +107,11 @@ int main(
     std::filesystem::path    knapsackInputFile{argv[1]};
     ks::Knapsack::shared_ptr knapsack{ks::KnapsackFileReader::read(knapsackInputFile)};
 
+    if (!knapsack)
+    {
+        return EXIT_FAILURE;
+    }
+
     // clang-format off
     // Benchmarker usable for each implementation of KS
     #ifdef BENCHMARK
@@ -124,7 +128,7 @@ int main(
     // clang-format off
     std::cout << std::endl;
     std::cout << "Bruteforce Knapsack Solution = {" 
-              << " .profit = " << std::to_string(knapsack->computeProfit()) 
+              << " .profit = " << std::to_string(knapsack->getItemsProfit()) 
               << " .weight = " << std::to_string(knapsack->getItemsWeight()) 
               << " } " << std::endl;
     // clang-format on

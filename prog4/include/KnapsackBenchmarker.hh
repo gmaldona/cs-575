@@ -33,7 +33,7 @@ namespace ks
 {
 
     /**
-     *
+     * Class for benchmarking each Knapsack Implementation.
      */
     class Benchmarker
     {

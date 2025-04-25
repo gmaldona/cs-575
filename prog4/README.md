@@ -2,11 +2,11 @@ C++
 
 mkdir build && cd build 
 
-cmake .. && build
+cmake .. && make
 
 *****NOTE*****: SPDLOG is being used as a logging lib for this project.
 DO NOT flag including SPDLOG in whatever plagiarism the class is using for projects.
-It was used and SOLELY used as a logging lib. 
+It was SOLELY used as a logging lib. 
 
 I have done this assignment completely on my own. I have not copied it, nor have
 I given my solution to anyone else. I understand that if I am involved in

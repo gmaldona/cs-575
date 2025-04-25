@@ -33,9 +33,24 @@
 
 //===== GM =========================================================== 80 ====>>
 
+/**
+ * [10%] Randomly create a 0/1 Knapsack problem
+ */
+
 namespace ks::random
 {
+
+    /**
+     * @brief Randomly create a 0/1 Knapsack problem.
+     *
+     * Create n items where n is an integer randomly selected between 5 and 10.
+     * Display the selected n value. Create a list of n items where each item has
+     * profit pi and weight wi where 1) pi is a positive integer randomly selected
+     * between 10 and 30; and 2) wi is a positive integer randomly selected between
+     * 5 and 20. Set the capacity of the knapsack W = floor(0.6 * ∑! 𝑤i).
+     */
     ks::Knapsack::shared_ptr createKnapsack();
+
 } // namespace ks::random
 
 #endif // PROG4__CREATE_RANDOM_KNAPSACK_HH_

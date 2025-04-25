@@ -20,12 +20,22 @@
 #ifndef PROG4__DP_KNAPSACK_HH_
 #define PROG4__DP_KNAPSACK_HH_
 
+#include <vector>
+
 #include "Knapsack.hh"
 
 //===== GM =========================================================== 80 ====>>
 
+/**
+ * [40%] Implement the refinement algorithm of dynamic programming approach (slides 38-40 of Ch12 lecture notes)
+ */
+
 namespace ks::dp
 {
+
+    typedef std::vector<ks::Knapsack::Item>              DPCol_t;
+    typedef std::vector<std::vector<ks::Knapsack::Item>> DPRow_t;
+    typedef DPRow_t                                      DPTable_t;
 
     /**
      * @brief Finds the subset with the most profit and minimum weight.

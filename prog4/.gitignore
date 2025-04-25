@@ -55,3 +55,6 @@ build/**/*
 lib/*
 bin/*
 test/test_runner
+
+knapsack01.txt
+output*.txt

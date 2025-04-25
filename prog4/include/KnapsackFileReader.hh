@@ -21,6 +21,8 @@
 #define PROG4__KNAPSACK_FILE_READER_HH_
 
 #define DELIMITER " "
+
+// Log and return macro for error on read
 #define RET_KS_ERROR                                                                                      \
     do                                                                                                    \
     {                                                                                                     \
@@ -38,23 +40,22 @@
 
 namespace ks
 {
-    /**
-     *
-     */
+
     class KnapsackFileReader
     {
 
     public:
         /**
-         * @brief
+         * @brief Reads in Knapsack file and generates a \ns ks::Knapsack instance
          *
-         * @param [in] knapsackFilePath
-         * @returns
+         * @param [in] knapsackFilePath Input path to a knapsack file
+         * @returns A knapsack instance created by read in file
          */
         static ks::Knapsack::shared_ptr read(const std::filesystem::path& knapsackFilePath);
 
     private:
-        KnapsackFileReader() = default;
+        KnapsackFileReader()  = default;
+        ~KnapsackFileReader() = default;
     };
 
 } // namespace ks

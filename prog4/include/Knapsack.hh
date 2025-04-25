@@ -34,6 +34,11 @@
 namespace ks
 {
 
+    /**
+     * @brief Enumeration of all Knapsack Implementations within this project.
+     * Depending on the implementation, some functions may perform different operations
+     * such as \na KnapsackFormattedFileWritter.cc
+     */
     enum KnapsackImpl
     {
         INIT,
@@ -80,6 +85,8 @@ namespace ks
             // clang-format on
         }
 
+        ~Knapsack() = default;
+
         size_t getItemCount()
         {
             return items_->size();
@@ -121,6 +128,9 @@ namespace ks
             knapsackMaxWeight_ = weight;
         }
 
+        /**
+         * @returns total profit of items in a container of \ns vector<Knapsack::Item>
+         */
         static profit_t computeProfit(
             const std::vector<Knapsack::Item>& items)
         {
@@ -135,11 +145,9 @@ namespace ks
             // clang-format on
         }
 
-        profit_t computeProfit()
-        {
-            return ks::Knapsack::computeProfit(*items_);
-        }
-
+        /**
+         * @returns total weight of items in the knapsack
+         */
         weight_t getItemsWeight()
         {
             // clang-format off
@@ -153,17 +161,12 @@ namespace ks
             // clang-format on
         }
 
+        /**
+         * @returns total profit of items in the knapsack
+         */
         profit_t getItemsProfit()
         {
-            // clang-format off
-            return std::accumulate(items_->begin(), 
-                                  items_->end(), 
-                                  0, 
-                                 [](const auto sum, const auto & next) {
-                                        return sum + next.price;
-                                    }
-            );
-            // clang-format on
+            return ks::Knapsack::computeProfit(*items_);
         }
 
 
@@ -181,8 +184,14 @@ namespace ks
 
 #endif // PROG4__KNAPSACK_HH_
 
+/**
+ * @brief Operator overload for printing \ns ks::Knapsack::Item
+ */
 std::ostream& operator<<(std::ostream& os, ks::Knapsack::Item item);
 
+/**
+ * @brief Operator overload for printing \ns ks::Knapsack
+ */
 std::ostream& operator<<(std::ostream& os, ks::Knapsack knapsack);
 
 //===== GM =========================================================== 80 ====>>

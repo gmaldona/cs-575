@@ -17,8 +17,11 @@
  * SOFTWARE.
  */
 
+#include <cstdint>
 #include <filesystem>
 #include <stdlib.h>
+#include <utility>
+#include <vector>
 
 #include "Knapsack.hh"
 #include "KnapsackFileReader.hh"
@@ -32,8 +35,26 @@
 //===== GM =========================================================== 80 ====>>
 
 void ks::dp::compute(
-    const ks::Knapsack::shared_ptr&)
+    const ks::Knapsack::shared_ptr& knapsack)
 {
+    // Refinement DP Approach
+    /**
+     * a list (
+     *  max { (x1, y1), (x2, y2) }
+     * ) for each row in DPTable
+     *
+     * trace are the cells in the DP Table that are required to compute the solution
+     * to the kapsack problem. All other cells are not needed
+     */
+    std::vector<std::vector<std::pair<uint64_t, uint64_t>>> trace;
+
+
+    // initialize the DP Table: vector<vector<Item>>
+    ks::dp::DPTable_t dpTable(knapsack->getProblemSpace().size() + 1);
+    for (auto& row : dpTable)
+    {
+        row = ks::dp::DPCol_t(knapsack->getMaxWeight() + 1);
+    }
 }
 
 int main(
@@ -47,6 +68,11 @@ int main(
 
     std::filesystem::path    knapsackInputFile{argv[1]};
     ks::Knapsack::shared_ptr knapsack = ks::KnapsackFileReader::read(knapsackInputFile);
+
+    if (!knapsack)
+    {
+        return EXIT_FAILURE;
+    }
 
     // clang-format off
     // Benchmarker usable for each implementation of KS

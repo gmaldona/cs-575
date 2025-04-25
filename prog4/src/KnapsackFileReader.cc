@@ -35,7 +35,7 @@ ks::Knapsack::shared_ptr ks::KnapsackFileReader::read(
 
     if (!knapsackFile.is_open())
     {
-        SPDLOG_WARN("Failed to open knapsack file: {}", knapsackFilePath.c_str());
+        SPDLOG_ERROR("Failed to open knapsack file: {}", knapsackFilePath.c_str());
         return nullptr;
     }
 

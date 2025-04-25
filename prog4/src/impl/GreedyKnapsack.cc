@@ -80,12 +80,14 @@ std::vector<ks::Knapsack::Item> ks::greedy::MaxB(
 
     for (auto& item : knapsack->getProblemSpace())
     {
+        // the greedy computation
         if (item.price > profit and item.weight <= knapsack->getMaxWeight())
         {
             solution = item;
             profit   = item.price;
             SPDLOG_INFO(solution.price);
         }
+        // the greedy computation
     }
     return std::vector<ks::Knapsack::Item>{solution};
 }
@@ -103,7 +105,7 @@ std::vector<ks::Knapsack::Item> ks::greedy::max(
     {
         auto items  = functor(knapsack);
         auto profit = ks::Knapsack::computeProfit(items);
-        if (profit > maxProfit)
+        if (profit > maxProfit) // one solution has a greater profit than the other
         {
             SPDLOG_INFO("New solution found");
             maxProfit = profit;
@@ -138,6 +140,11 @@ int main(
     std::filesystem::path    knapsackInputFile{argv[1]};
     ks::Knapsack::shared_ptr knapsack = ks::KnapsackFileReader::read(knapsackInputFile);
 
+    if (!knapsack)
+    {
+        return EXIT_FAILURE;
+    }
+
     // clang-format off
     // Benchmarker usable for each implementation of KS
     #ifdef BENCHMARK
@@ -154,7 +161,7 @@ int main(
     // clang-format off
     std::cout << std::endl;
     std::cout << "Greedy Knapsack Solution = {" 
-              << " .profit = " << std::to_string(knapsack->computeProfit()) 
+              << " .profit = " << std::to_string(knapsack->getItemsProfit()) 
               << " .weight = " << std::to_string(knapsack->getItemsWeight()) 
               << " } " << std::endl;
     // clang-format on

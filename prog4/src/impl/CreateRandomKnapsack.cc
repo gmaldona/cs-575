@@ -30,16 +30,6 @@
 
 //===== GM =========================================================== 80 ====>>
 
-/**
- * Randomly create a 0/1 Knapsack problem as follows:
- *
- * Create n items where n is an integer randomly selected between 5 and 10.
- * Display the selected n value. Create a list of n items where each item has
- * profit pi and weight wi where 1) pi is a positive integer randomly selected
- * between 10 and 30; and 2) wi is a positive integer randomly selected between
- * 5 and 20. Set the capacity of the knapsack W = floor(0.6 * ∑! 𝑤i).
- */
-
 ks::Knapsack::shared_ptr ks::random::createKnapsack()
 {
     std::random_device randomDeviceSeed;
@@ -57,13 +47,11 @@ ks::Knapsack::shared_ptr ks::random::createKnapsack()
     std::vector<ks::Knapsack::Item> items;
     for (size_t i = 0; i < knapsackSize(generator); ++i)
     {
-        ks::Knapsack::profit_t itemProfit = profit(generator);
-        ks::Knapsack::weight_t itemWeight = weight(generator);
         // clang-format off
         items.push_back(ks::Knapsack::Item {
             .name = "item" + std::to_string(i + 1),
-            .price = itemProfit,
-            .weight = itemWeight
+            .price = profit(generator),
+            .weight = weight(generator)
         });
         // clang-format on
     }

@@ -29,6 +29,10 @@
 
 //===== GM =========================================================== 80 ====>>
 
+/**
+ * [30%] Implement the improved Greedy algorithm 4 (slide 20 of Ch12 lecture notes).
+ */
+
 namespace ks::greedy
 {
 
@@ -40,12 +44,12 @@ namespace ks::greedy
         ks::Knapsack::Item item;
         double             benefit;
 
+        // Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
         IBenefit(
             const ks::Knapsack::Item& other)
+            : item{other}
+            , benefit{item.price / item.weight}
         {
-            item = other;
-            // Chapter 12. Slide 18. Design and Analysis of Computer Algorithms.
-            benefit = item.price / item.weight;
         }
     };
 
