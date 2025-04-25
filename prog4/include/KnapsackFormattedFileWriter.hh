@@ -56,7 +56,7 @@ namespace ks
      * @param [in] dpTable Populated dynamic programming table
      */
     void formatDPKnapsack(const Knapsack::shared_ptr& knapsack, const std::filesystem::path& entriesOutputPath,
-        std::shared_ptr<std::vector<std::shared_ptr<std::vector<int64_t>>>> dpTable);
+        const std::vector<std::vector<int64_t>>& dpTable);
 
     /**
      * @brief

@@ -77,7 +77,7 @@ namespace ks
 
     void formatDPKnapsack(
         const Knapsack::shared_ptr&, const std::filesystem::path& entriesOutputPath,
-        std::shared_ptr<std::vector<std::shared_ptr<std::vector<int64_t>>>> dpTable)
+        const std::vector<std::vector<int64_t>>& entries)
     {
         std::ofstream entriesOutputFile;
 
@@ -87,15 +87,15 @@ namespace ks
             SPDLOG_ERROR("Failed to write Dynamic Programming table to: {}", entriesOutputPath.c_str());
         }
 
-        std::string formatted = "";
-        for (size_t row = 0; row < dpTable->size(); ++row)
+        std::string formatted;
+        for (size_t row = 1; row < entries.size(); ++row)
         {
-            formatted += ("row " + std::to_string(row + 1));
-            for (size_t col = 0; col < (*dpTable)[row]->size(); ++col)
+            formatted += ("row" + std::to_string(row));
+            for (size_t col = 0; col < entries[row].size(); ++col)
             {
-                if ((*(*dpTable)[row])[col] >= 0)
+                if (entries[row][col] >= 0)
                 {
-                    formatted += ("\t" + std::to_string((*(*dpTable)[row])[col]));
+                    formatted += ("\t" + std::to_string(entries[row][col]));
                 }
             }
 

@@ -41,7 +41,7 @@ ks::Knapsack::shared_ptr ks::random::createKnapsack()
     // randomizier item profit
     std::uniform_int_distribution<ks::Knapsack::profit_t> profit(ITEM_PROFIT_LOWER_BOUND, ITEM_PROFIT_UPPER_BOUND);
     // randomizier item weight
-    std::uniform_real_distribution<ks::Knapsack::weight_t> weight(ITEM_WEIGHT_LOWER_BOUND, ITEM_WEIGHT_UPPER_BOUND);
+    std::uniform_int_distribution<ks::Knapsack::weight_t> weight(ITEM_WEIGHT_LOWER_BOUND, ITEM_WEIGHT_UPPER_BOUND);
     // clang-format on
 
     std::vector<ks::Knapsack::Item> items;

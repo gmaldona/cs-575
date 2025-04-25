@@ -54,7 +54,7 @@ namespace ks
     {
     public:
         typedef int64_t                   profit_t;
-        typedef double                    weight_t;
+        typedef int64_t                   weight_t;
         typedef std::shared_ptr<Knapsack> shared_ptr;
 
         struct Item
@@ -68,7 +68,6 @@ namespace ks
             : allItems_{}
             , knapsackMaxWeight_{}
         {
-            Knapsack({}, 0.0);
         }
 
         Knapsack(

@@ -19,8 +19,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <filesystem>
-#include <stdlib.h>
 #include <string>
 #include <utility> // std::pair
 #include <vector>
@@ -54,18 +54,18 @@ ks::Knapsack::profit_t ks::dp::computeDPEntry(
     }
     else
     {
-        return (*(*dpTable)[point.first - 1])[knapsack->getMaxWeight()];
+        return (*(*dpTable)[point.first - 1])[point.second];
     }
 }
 
 void ks::dp::rcompute(
-    const ks::Knapsack::shared_ptr& knapsack, const DPTable_t& dpTable, point_t&& point, size_t depth)
+    const ks::Knapsack::shared_ptr& knapsack, const DPTable_t& dpTable, std::vector<std::vector<int64_t>>& entries,
+    point_t&& point, size_t depth)
 {
     if (point.first == 1)
     {
         (*(*dpTable)[point.first])[point.second] = computeDPEntry(knapsack, dpTable, std::move(point));
-        // std::cout << std::string(depth, '\t') << point << " = "
-        //           << std::to_string((*(*dpTable)[point.first])[point.second]) << std::endl;
+        entries[point.first].push_back((*(*dpTable)[point.first])[point.second]);
         return;
     }
 
@@ -75,41 +75,36 @@ void ks::dp::rcompute(
     // clang-format on
 
     depth++;
+    if (lpoint.first >= 0 && lpoint.second >= 0)
+    {
+        rcompute(knapsack, dpTable, entries, std::move(lpoint), depth);
+    }
 
-    rcompute(knapsack, dpTable, std::move(lpoint), depth);
-    rcompute(knapsack, dpTable, std::move(rpoint), depth);
-
+    if (rpoint.first >= 0 && rpoint.second >= 0)
+    {
+        rcompute(knapsack, dpTable, entries, std::move(rpoint), depth);
+    }
     depth--;
 
     (*(*dpTable)[point.first])[point.second] = computeDPEntry(knapsack, dpTable, std::move(point));
-
-    /*
-    std::cout << std::string(depth, '\t') << point << " = " << std::to_string((*(*dpTable)[point.first])[point.second])
-              << std::endl;
-
-
-    std::cout << std::endl;
-    */
+    entries[point.first].push_back((*(*dpTable)[point.first])[point.second]);
 }
 
-ks::dp::DPTable_t ks::dp::compute(
-    const ks::Knapsack::shared_ptr& knapsack)
+std::vector<std::vector<int64_t>> ks::dp::compute(
+    const ks::Knapsack::shared_ptr& knapsack, ks::dp::DPTable_t& dpTable)
 {
-    ks::dp::DPTable_t dpTable = std::make_shared<__DPRow_t>(knapsack->getProblemSpace().size() + 1);
+    dpTable = std::make_shared<__DPRow_t>(knapsack->getProblemSpace().size() + 1);
+    std::vector<std::vector<int64_t>> entries(knapsack->getProblemSpace().size() + 1);
     for (auto& row : *dpTable)
     {
         row = std::make_shared<__DPCol_t>(knapsack->getMaxWeight() + 1, 0);
     }
 
-    for (auto& item : knapsack->getProblemSpace())
-    {
-        std::cout << item << std::endl;
-    }
+    rcompute(
+        knapsack, dpTable, entries, std::make_pair(knapsack->getProblemSpace().size(), knapsack->getMaxWeight()), 0);
 
-    rcompute(knapsack, dpTable, std::make_pair(knapsack->getProblemSpace().size(), knapsack->getMaxWeight()), 0);
-
-    size_t i = knapsack->getProblemSpace().size();
-    size_t w = knapsack->getMaxWeight();
+    int64_t i = knapsack->getProblemSpace().size();
+    int64_t w = knapsack->getMaxWeight();
     while (i > 0 && w > 0)
     {
         if ((*(*dpTable)[i])[w] != (*(*dpTable)[i - 1])[w])
@@ -118,9 +113,13 @@ ks::dp::DPTable_t ks::dp::compute(
             w -= knapsack->getProblemSpace()[i - 1].weight;
             i--;
         }
+        else
+        {
+            i--;
+        }
     }
 
-    return dpTable;
+    return entries;
 }
 
 int main(
@@ -140,18 +139,27 @@ int main(
         return EXIT_FAILURE;
     }
 
-    ks::dp::DPTable_t dpTable{};
+    ks::dp::DPTable_t                 dpTable{};
+    std::vector<std::vector<int64_t>> entries;
     // clang-format off
     // Benchmarker usable for each implementation of KS
     #ifdef BENCHMARK
         ks::Benchmarker benchmarker{"ks::dp::compute"};
         
         benchmarker.start();
-            dpTable = ks::dp::compute(knapsack); 
+            entries = ks::dp::compute(knapsack, dpTable);
         benchmarker.end();
     #else
-        dpTable = ks::dp::compute(knapsack);
+        entries = ks::dp::compute(knapsack, dpTable);
     #endif
+    // clang-format on
+
+    // clang-format off
+    std::cout << std::endl;
+    std::cout << "DP Knapsack Solution = {"
+              << " .profit = " << std::to_string(knapsack->getItemsProfit())
+              << " .weight = " << std::to_string(knapsack->getItemsWeight())
+              << " } " << std::endl;
     // clang-format on
 
     for (auto& item : *knapsack->getItems())
@@ -160,14 +168,14 @@ int main(
     }
     std::cout << std::endl;
 
-    ks::formatDPKnapsack(knapsack, knapsackInputFile.parent_path().append("entries2.txt"), dpTable);
+    ks::formatDPKnapsack(knapsack, knapsackInputFile.parent_path().append("entries2.txt"), entries);
 
     // clang-format off
     ks::KnapsackFormattedFileWriter::at(
         knapsack, 
         knapsackInputFile.parent_path().append(OUTPUT_FILE(2)
     ),
-    ks::KnapsackImpl::BRUTEFORCE);
+    ks::KnapsackImpl::DP);
     // clang-format on
 
     return EXIT_SUCCESS;

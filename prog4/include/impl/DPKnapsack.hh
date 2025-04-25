@@ -53,8 +53,9 @@ namespace ks::dp
      *
      */
     // clang-format off
-    void rcompute(const ks::Knapsack::shared_ptr& knapsack, 
-                  const DPTable_t& dpTable, 
+    void rcompute(const ks::Knapsack::shared_ptr& knapsack,
+                  const DPTable_t& dpTable,
+                  std::vector<std::vector<int64_t>>& entries,
                   point_t&& point,
                   size_t depth
         );
@@ -64,9 +65,10 @@ namespace ks::dp
      * @brief Finds the subset with the most profit and minimum weight.
      *
      * @param [in] knapsack The entire problem space of the knapsack problem
-     * @returns computed dynamic programming table
+     * @param [in] dpTable
+     * @returns
      */
-    ks::dp::DPTable_t compute(const ks::Knapsack::shared_ptr& knapsack);
+    std::vector<std::vector<int64_t>> compute(const ks::Knapsack::shared_ptr& knapsack, ks::dp::DPTable_t& dpTable);
 
 } // namespace ks::dp
 
