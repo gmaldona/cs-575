@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # CS 575 - Programming Assignment 4
 #
 # Graduate student @ School of Computing, Binghamton University.
