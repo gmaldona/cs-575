@@ -75,10 +75,35 @@ namespace ks
         return formatted;
     }
 
-    std::string formatDPKnapsack(
-        const Knapsack::shared_ptr&)
+    void formatDPKnapsack(
+        const Knapsack::shared_ptr&, const std::filesystem::path& entriesOutputPath,
+        std::shared_ptr<std::vector<std::shared_ptr<std::vector<int64_t>>>> dpTable)
     {
-        return "";
+        std::ofstream entriesOutputFile;
+
+        entriesOutputFile.open(entriesOutputPath);
+        if (!entriesOutputFile.is_open())
+        {
+            SPDLOG_ERROR("Failed to write Dynamic Programming table to: {}", entriesOutputPath.c_str());
+        }
+
+        std::string formatted = "";
+        for (size_t row = 0; row < dpTable->size(); ++row)
+        {
+            formatted += ("row " + std::to_string(row + 1));
+            for (size_t col = 0; col < (*dpTable)[row]->size(); ++col)
+            {
+                if ((*(*dpTable)[row])[col] >= 0)
+                {
+                    formatted += ("\t" + std::to_string((*(*dpTable)[row])[col]));
+                }
+            }
+
+            formatted += "\n";
+        }
+
+        entriesOutputFile << formatted;
+        SPDLOG_INFO("Writing to: {}", entriesOutputPath.c_str());
     }
 
     bool ks::KnapsackFormattedFileWriter::at(
@@ -99,7 +124,6 @@ namespace ks
             outputFile << formatInitKnapsack(knapsack);
             break;
         case ks::KnapsackImpl::DP:
-            outputFile << formatDPKnapsack(knapsack);
         case ks::KnapsackImpl::GREEDY:
         case ks::KnapsackImpl::BRUTEFORCE:
             outputFile << formatKnapsackSolution(knapsack);
