@@ -85,7 +85,6 @@ std::vector<ks::Knapsack::Item> ks::greedy::MaxB(
         {
             solution = item;
             profit   = item.price;
-            SPDLOG_INFO(solution.price);
         }
         // the greedy computation
     }
