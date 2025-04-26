@@ -1,7 +1,10 @@
 C++
 
-mkdir build && cd build 
+./buildKS.sh
 
+**OR** build it yourself
+
+mkdir build && cd build 
 cmake .. && make
 
 *****NOTE*****: SPDLOG is being used as a logging lib for this project.
