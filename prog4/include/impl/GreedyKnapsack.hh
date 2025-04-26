@@ -49,7 +49,7 @@ namespace ks::greedy
         IBenefit(
             const ks::Knapsack::Item& other)
             : item{other}
-            , benefit{static_cast<double>(item.price / item.weight)}
+            , benefit{static_cast<double>(item.price) / static_cast<double>(item.weight)}
         {
         }
     };
